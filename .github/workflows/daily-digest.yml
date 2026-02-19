@@ -1,0 +1,52 @@
+name: Daily AI Digest Generator
+
+on:
+  schedule:
+    # 每天 UTC 时间 00:00 运行（对应台湾时间早上 8:00）
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允许手动在 GitHub 网页触发
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun runtime
+        uses: oven-sh/setup-bun@v1
+
+      - name: Generate Digest via Bun
+        # 在此处注入你提到的所有环境变量
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_BASE: "https://api.moonshot.cn/v1"
+          OPENAI_MODEL: "kimi-k2.5"
+        run: |
+          # 创建统一对外的 public 目录和存放历史的 archives 目录
+          mkdir -p public/archives
+          
+          # 获取当天日期，格式如 20260218
+          TODAY=$(date +%Y%m%d)
+          FILENAME="digest-${TODAY}.md"
+          
+          echo "Starting generation for $TODAY..."
+          
+          # 执行 Bun 脚本（注意路径已改为相对路径 scripts/digest.ts）
+          bun scripts/digest.ts --hours 48 --top-n 15 --lang zh --output "public/archives/${FILENAME}"
+          
+          # 将今天生成的归档文件复制一份作为首页固定的入口文件
+          cp "public/archives/${FILENAME}" public/digest.md
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/
+          # 提交信息自动带上日期
+          git commit -m "docs: auto-generate daily digest for $(date +%Y%m%d)" || echo "No changes to commit"
+          git push
