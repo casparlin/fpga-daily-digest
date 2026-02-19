@@ -6,96 +6,93 @@
   <title>Caspar's FPGA 每日精选</title>
   <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"></script>
   <style>
-    body { 
-      max-width: 800px; 
-      margin: 0 auto; 
-      padding: 20px; 
-      background: #f4f5f7; 
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    
-    .header { 
-      display: flex; 
-      flex-direction: column;
-      align-items: center; 
-      margin-bottom: 30px; 
-    }
-    .header h2 { 
-      margin: 0 0 20px 0; 
-      color: #333; 
-      font-size: 1.5rem;
-    }
-
-    .nav-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: white;
-      padding: 12px 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-    }
-
-    .nav-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border: 1px solid #eaeaea;
-      background: #fafafa;
-      border-radius: 6px;
-      cursor: pointer;
-      color: #c88181; 
-      font-size: 18px;
-      font-weight: bold;
-      transition: all 0.2s ease;
-    }
-    .nav-btn:hover:not(:disabled) {
-      background: #fff;
-      border-color: #d89999;
-      box-shadow: 0 0 10px rgba(100, 150, 255, 0.2); 
-    }
-    .nav-btn:disabled {
-      color: #ccc;
-      cursor: not-allowed;
-      background: #f5f5f5;
-    }
-
-    input[type="date"] { 
-      padding: 8px 12px; 
-      border: 1px solid #eaeaea; 
-      border-radius: 6px; 
-      font-size: 16px; 
-      font-family: monospace;
-      color: #333;
-      cursor: pointer;
-      outline: none;
-      background: #fff;
-      font-weight: 500;
-    }
-    input[type="date"]:hover {
-      border-color: #ccc;
-    }
-    
-    zero-md { 
-      display: none; /* 默认隐藏，验证通过后显示 */
-      background: white; 
-      padding: 30px; 
-      border-radius: 8px; 
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-    }
-    
-    .error-msg { 
-      color: #888; 
-      padding: 40px; 
-      text-align: center; 
-      font-size: 16px;
-      display: none; 
-    }
-  </script>
+    body { max-width: 800px; margin: 0 auto; padding: 20px; background: #f4f5f7; font-family: sans-serif; }
+    .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .header h2 { margin: 0 0 15px 0; color: #333; }
+    .nav-group { display: flex; justify-content: center; gap: 10px; }
+    input[type="date"] { padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+    button { padding: 8px 15px; border: 1px solid #ddd; background: #fafafa; border-radius: 4px; cursor: pointer; }
+    zero-md { display: none; background: white; padding: 30px; border-radius: 8px; }
+    .error-msg { display: none; text-align: center; padding: 40px; color: #888; }
+  </style>
 </head>
 <body>
 
   <div class="header">
-    <h2>📰 FPGA 每日技术精
+    <h2>📰 FPGA 每日技术精选</h2>
+    <div class="nav-group">
+      <button id="prev-btn">←</button>
+      <input type="date" id="history-date">
+      <button id="next-btn">→</button>
+    </div>
+  </div>
+
+  <div id="error-msg" class="error-msg">该日期没有日报</div>
+  <zero-md id="md-viewer"></zero-md>
+
+  <script>
+    const dateInput = document.getElementById('history-date');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const mdViewer = document.getElementById('md-viewer');
+    const errorMsg = document.getElementById('error-msg');
+
+    function getLocalDateString(dateObj) {
+      const offset = dateObj.getTimezoneOffset() * 60000;
+      return new Date(dateObj.getTime() - offset).toISOString().split('T')[0];
+    }
+
+    const localTodayStr = getLocalDateString(new Date());
+    dateInput.max = localTodayStr;
+    dateInput.value = localTodayStr;
+
+    async function loadDigest(dateStr) {
+      if (!dateStr) return;
+      nextBtn.disabled = (dateStr >= localTodayStr);
+
+      let targetFile = 'digest.md';
+      if (dateStr !== localTodayStr) {
+        targetFile = `archives/digest-${dateStr.replace(/-/g, '')}.md`;
+      }
+
+      try {
+        const res = await fetch(targetFile, { method: 'HEAD' });
+        if (res.ok) {
+          errorMsg.style.display = 'none';
+          mdViewer.style.display = 'block';
+          mdViewer.setAttribute('src', targetFile);
+        } else {
+          // 容错：如果今天是最新，但根目录没有，尝试去 archives 找
+          if (dateStr === localTodayStr) {
+            const fallback = `archives/digest-${localTodayStr.replace(/-/g, '')}.md`;
+            const fallbackRes = await fetch(fallback, { method: 'HEAD' });
+            if (fallbackRes.ok) {
+              errorMsg.style.display = 'none';
+              mdViewer.style.display = 'block';
+              mdViewer.setAttribute('src', fallback);
+              return;
+            }
+          }
+          mdViewer.style.display = 'none';
+          errorMsg.style.display = 'block';
+        }
+      } catch (e) {
+        mdViewer.style.display = 'none';
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    dateInput.addEventListener('change', e => loadDigest(e.target.value));
+    prevBtn.addEventListener('click', () => {
+      let d = new Date(dateInput.value); d.setDate(d.getDate() - 1);
+      dateInput.value = getLocalDateString(d); loadDigest(dateInput.value);
+    });
+    nextBtn.addEventListener('click', () => {
+      let d = new Date(dateInput.value); d.setDate(d.getDate() + 1);
+      dateInput.value = getLocalDateString(d); loadDigest(dateInput.value);
+    });
+
+    loadDigest(localTodayStr);
+  </script>
+</body>
+</html>
