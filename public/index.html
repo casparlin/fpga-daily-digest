@@ -13,6 +13,7 @@
       background: #f4f5f7; 
       font-family: system-ui, -apple-system, sans-serif;
     }
+    
     .header { 
       display: flex; 
       flex-direction: column;
@@ -24,26 +25,77 @@
       color: #333; 
       font-size: 1.5rem;
     }
-    /* 注意：我暂时移除了 display: none 以便让你能看到内容 */
+
+    .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid #eaeaea;
+      background: #fafafa;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #c88181; 
+      font-size: 18px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: #fff;
+      border-color: #d89999;
+      box-shadow: 0 0 10px rgba(100, 150, 255, 0.2); 
+    }
+    .nav-btn:disabled {
+      color: #ccc;
+      cursor: not-allowed;
+      background: #f5f5f5;
+    }
+
+    input[type="date"] { 
+      padding: 8px 12px; 
+      border: 1px solid #eaeaea; 
+      border-radius: 6px; 
+      font-size: 16px; 
+      font-family: monospace;
+      color: #333;
+      cursor: pointer;
+      outline: none;
+      background: #fff;
+      font-weight: 500;
+    }
+    input[type="date"]:hover {
+      border-color: #ccc;
+    }
+    
     zero-md { 
+      display: none; /* 默认隐藏，验证通过后显示 */
       background: white; 
       padding: 30px; 
       border-radius: 8px; 
       box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
     }
-  </style>
+    
+    .error-msg { 
+      color: #888; 
+      padding: 40px; 
+      text-align: center; 
+      font-size: 16px;
+      display: none; 
+    }
+  </script>
 </head>
 <body>
 
   <div class="header">
-    <h2>📰 FPGA 每日技术精选</h2>
-  </div>
-  <zero-md>
-    <template>
-      <xmp>
-      </xmp>
-    </template>
-  </zero-md>
-
-</body>
-</html>
+    <h2>📰 FPGA 每日技术精
