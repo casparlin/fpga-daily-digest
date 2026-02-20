@@ -14,6 +14,36 @@
     button { padding: 8px 15px; border: 1px solid #ddd; background: #fafafa; border-radius: 4px; cursor: pointer; }
     zero-md { display: none; background: white; padding: 30px; border-radius: 8px; }
     .error-msg { display: none; text-align: center; padding: 40px; color: #888; }
+    /* 底部导航区域样式 */
+    .footer-area {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 30px;
+    }
+    
+    .home-link-btn {
+      display: inline-block;
+      background-color: #e6ebed; /* 浅灰蓝色背景，贴近你的截图 */
+      color: #849296; /* 灰色字体 */
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: underline;
+      text-decoration-thickness: 3px; /* 加粗下划线 */
+      text-underline-offset: 4px; /* 让下划线稍微往下移一点，不拥挤 */
+      transition: background-color 0.2s ease;
+    }
+    
+    .home-link-btn:hover {
+      background-color: #d8dee0; /* 鼠标悬浮时稍微加深背景色 */
+    }
+    
+    .footer-text {
+      margin-top: 20px;
+      color: #95a5a6;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
@@ -93,6 +123,10 @@
     });
 
     loadDigest(localTodayStr);
+    <div class="footer-area">
+      <a href="https://0101666.xyz" class="home-link-btn">返回首页</a>
+      <div class="footer-text">@0101666</div>
+    </div>
   </script>
 </body>
 </html>
