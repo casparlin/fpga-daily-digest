@@ -37,7 +37,7 @@ jobs:
           echo "Starting generation for $TODAY..."
           
           # 执行 Bun 脚本（注意路径已改为相对路径 scripts/digest.ts）
-          bun scripts/digest.ts --hours 48 --top-n 15 --lang zh --output "public/archives/${FILENAME}"
+          bun scripts/digest.ts --hours 24 --top-n 15 --lang zh --output "public/archives/${FILENAME}"
           
           # 将今天生成的归档文件复制一份作为首页固定的入口文件
           cp "public/archives/${FILENAME}" public/digest.md
