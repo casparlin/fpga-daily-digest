@@ -13,7 +13,6 @@ const RSS_FEEDS = [
   "https://verificationacademy.com/blog/feed/",
   "https://zipcpu.com/blog/rss.xml",
   "https://www.synopsys.com/blogs/rss.xml",
-  "https://community.cadence.com/rss",
   "https://www.eejournal.com/feed/",
   "https://www.xilinx.com/blogs/rss.xml",
   "https://www.intel.com/content/www/us/en/programmable/support/rss.html"
