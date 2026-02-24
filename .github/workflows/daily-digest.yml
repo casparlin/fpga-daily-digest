@@ -2,8 +2,8 @@ name: Daily AI Digest Generator
 
 on:
   schedule:
-    # 每天 UTC 时间 00:00 运行（对应台湾时间早上 8:00）
-    - cron: '0 0 * * *'
+    # 每天 UTC 时间 20:00 运行（对应北京时间早上 4:00）
+    - cron: '0 20 * * *'
   workflow_dispatch: # 允许手动在 GitHub 网页触发
 
 jobs:
@@ -26,6 +26,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_API_BASE: "https://api.moonshot.cn/v1"
           OPENAI_MODEL: "kimi-k2.5"
+          TZ: 'Asia/Shanghai'
         run: |
           # 创建统一对外的 public 目录和存放历史的 archives 目录
           mkdir -p public/archives
@@ -43,6 +44,8 @@ jobs:
           cp "public/archives/${FILENAME}" public/digest.md
 
       - name: Commit and Push changes
+        env:
+          TZ: 'Asia/Shanghai'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
