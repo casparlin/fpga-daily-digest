@@ -37,17 +37,32 @@ interface ScoredArticle extends Article {
 }
 
 // ----------------------------------------------------------------------
+// 时间辅助函数 (UTC+8)
+// ----------------------------------------------------------------------
+function toUTC8String(date: Date): string {
+  // 加上 8 小时的毫秒数 (8 * 60 * 60 * 1000 = 28800000)
+  return new Date(date.getTime() + 28800000).toISOString();
+}
+
+// ----------------------------------------------------------------------
 // 命令行参数解析
 // ----------------------------------------------------------------------
 function parseArgs() {
   const args = process.argv.slice(2);
-  const config = { hours: 48, topN: 15, lang: "zh", output: "./fpga-digest.md" };
+  const config = { hours: 48, topN: 15, lang: "zh", output: "" };
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--hours") config.hours = parseInt(args[++i], 10);
     if (args[i] === "--top-n") config.topN = parseInt(args[++i], 10);
     if (args[i] === "--lang") config.lang = args[++i];
     if (args[i] === "--output") config.output = args[++i];
   }
+  
+  // 如果没有指定输出文件，则使用 UTC+8 日期生成默认文件名
+  if (!config.output) {
+    const dateStr = toUTC8String(new Date()).slice(0, 10).replace(/-/g, '');
+    config.output = `./fpga-digest-${dateStr}.md`;
+  }
+  
   return config;
 }
 
@@ -250,7 +265,11 @@ async function main() {
   console.log("📄 正在生成 Markdown 报告...");
   
   let md = `# 🛠️ FPGA / 验证技术每日精选\n\n`;
-  md += `> 生成时间：${new Date().toLocaleString()} | 数据范围：过去 ${config.hours} 小时\n\n`;
+  
+  // 使用 UTC+8 生成人类可读的时间字符串，格式如：2026-03-03 09:30:00
+  const nowUTC8Str = toUTC8String(new Date());
+  const formattedTime = nowUTC8Str.replace('T', ' ').slice(0, 19);
+  md += `> 生成时间：${formattedTime} | 数据范围：过去 ${config.hours} 小时\n\n`;
   
   md += `## 📝 今日看点\n\n${trendSummary}\n\n`;
   md += `---\n\n`;
