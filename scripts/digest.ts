@@ -1,21 +1,30 @@
 // scripts/digest.ts
-// 专为 FPGA / 数字 IC 验证工程师定制的 AI 每日资讯精选 (融合原版兼容性终极版)
+// 专为数字 IC 与 FPGA 验证工程师定制的 AI 资讯精选 (增强源 & 常青评分版)
 
 const RSS_FEEDS = [
+  // --- 经典硬件与架构源 ---
   "https://zipcpu.com/feed.xml",
   "https://www.verilogpro.com/feed/",
   "https://hackaday.com/category/fpga/feed/",
   "https://tomverbeure.github.io/atom.xml",
   "https://itsembedded.com/index.xml",
+  
+  // --- 行业与 EDA 厂商大号 ---
   "https://semiengineering.com/feed/",
-  "https://www.verilogpro.com/feed/",
   "https://semiwiki.com/feed/",
   "https://verificationacademy.com/blog/feed/",
-  "https://zipcpu.com/blog/rss.xml",
   "https://www.synopsys.com/blogs/rss.xml",
   "https://www.eejournal.com/feed/",
   "https://www.xilinx.com/blogs/rss.xml",
-  "https://www.intel.com/content/www/us/en/programmable/support/rss.html"
+  "https://www.intel.com/content/www/us/en/programmable/support/rss.html",
+
+  // --- 🌟 新增：顶级硬核与验证方法学源 ---
+  "https://www.amiq.com/consulting/blog/feed/", // AMIQ：极客级 UVM/SV 验证技巧和开源工具
+  "https://blogs.sw.siemens.com/verificationhorizons/feed/", // 西门子(Mentor) 验证视界
+  "https://chipsandcheese.com/feed/", // 极其硬核的底层芯片微架构与性能分析
+  "https://agilesoc.com/feed/", // 探讨敏捷开发在硬件设计和验证中的应用
+  "https://vhdlwhiz.com/feed/", // VHDL 与通用 FPGA 仿真测试思路
+  "https://www.adiuvoengineering.com/blog-feed.xml" // Adam Taylor 的 FPGA 开发实战博客
 ];
 
 // 接口定义
@@ -49,7 +58,7 @@ function toUTC8String(date: Date): string {
 // ----------------------------------------------------------------------
 function parseArgs() {
   const args = process.argv.slice(2);
-  const config = { hours: 48, topN: 15, lang: "zh", output: "" };
+  const config = { hours: 168, topN: 15, lang: "zh", output: "" }; // 默认改为抓取 168 小时 (7天)
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--hours") config.hours = parseInt(args[++i], 10);
     if (args[i] === "--top-n") config.topN = parseInt(args[++i], 10);
@@ -57,7 +66,6 @@ function parseArgs() {
     if (args[i] === "--output") config.output = args[++i];
   }
   
-  // 如果没有指定输出文件，则使用 UTC+8 日期生成默认文件名
   if (!config.output) {
     const dateStr = toUTC8String(new Date()).slice(0, 10).replace(/-/g, '');
     config.output = `./fpga-digest-${dateStr}.md`;
@@ -67,22 +75,20 @@ function parseArgs() {
 }
 
 // ----------------------------------------------------------------------
-// JSON 提取 (引入原版的高级去壳逻辑)
+// JSON 提取防抖
 // ----------------------------------------------------------------------
 function parseJsonResponse(text: string) {
   let jsonText = text.trim();
-  // 像原版一样剥离 Markdown 代码块
   if (jsonText.startsWith('```')) {
     jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
   }
-  // 加上正则提取大括号的最后防线
   const match = jsonText.match(/\{[\s\S]*\}/);
   const cleanJson = match ? match[0] : jsonText;
   return JSON.parse(cleanJson);
 }
 
 // ----------------------------------------------------------------------
-// AI 接口调用 (引入原版的 Moonshot 判断)
+// AI 接口调用
 // ----------------------------------------------------------------------
 async function callAI(prompt: string): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY;
@@ -98,7 +104,6 @@ async function callAI(prompt: string): Promise<string> {
     messages: [{ role: "user", content: prompt }]
   };
 
-  // 🚨 核心修复：如果是 Kimi (Moonshot)，绝对不要传 temperature
   if (!isMoonshot) {
     body.temperature = 0.3;
   }
@@ -122,7 +127,7 @@ async function callAI(prompt: string): Promise<string> {
 }
 
 // ----------------------------------------------------------------------
-// RSS 抓取与解析 (极简正则版)
+// RSS 抓取与解析
 // ----------------------------------------------------------------------
 async function fetchRSS(url: string, cutoffDate: Date): Promise<Article[]> {
   try {
@@ -159,7 +164,7 @@ async function fetchRSS(url: string, cutoffDate: Date): Promise<Article[]> {
     }
     return articles;
   } catch (e) {
-    console.log(`⚠️ 抓取失败: ${url}`);
+    console.log(`⚠️ 抓取失败/超时: ${url}`);
     return [];
   }
 }
@@ -169,11 +174,10 @@ async function fetchRSS(url: string, cutoffDate: Date): Promise<Article[]> {
 // ----------------------------------------------------------------------
 async function main() {
   const config = parseArgs();
-  console.log(`🚀 启动 FPGA 验证日报生成器 | 时间范围: ${config.hours}h | 数量: ${config.topN}`);
+  console.log(`🚀 启动 FPGA/IC 验证资讯精选 | 时间范围: ${config.hours}h | 数量: ${config.topN}`);
   
   const cutoffDate = new Date(Date.now() - config.hours * 60 * 60 * 1000);
   
-  // 1. 并发抓取 RSS
   console.log("📡 正在抓取资讯源...");
   const fetchPromises = RSS_FEEDS.map(url => fetchRSS(url, cutoffDate));
   const results = await Promise.all(fetchPromises);
@@ -181,24 +185,29 @@ async function main() {
   console.log(`✅ 共抓取到 ${allArticles.length} 篇近期文章。`);
 
   if (allArticles.length === 0) {
-    console.log("没有找到新文章，退出。");
+    console.log("没有找到新文章，大概率是时间窗口内大家都在写代码没空发博客，退出。");
     return;
   }
 
-  // 2. AI 评分与分类
-  console.log("🤖 正在进行 AI 维度评估与打分...");
+  console.log("🤖 正在进行 AI 深度维度评估与打分...");
   const scoredArticles: ScoredArticle[] = [];
   
   for (const article of allArticles) {
+    // 🌟 重新设计的评分 Prompt：弱化时效，强调验证与原型落地
     const prompt = `你是一个资深的数字IC与FPGA验证专家。请评估以下文章：
 标题：${article.title}
 来源：${article.source}
 
-请从相关性、质量、时效性三个维度打分(1-10)。并归入以下分类之一：
-[🛠️ 验证方法学, 💻 RTL与架构设计, ⚙️ EDA工具 & 开源生态, 🚀 行业动态 & 趋势, 📝 其他硬件杂谈]
+硬件技术文章通常具有长效价值。请弱化纯新闻时效性的影响，重点从以下三个维度进行综合打分(总分1-10的整数)：
+1. 技术与架构深度：是否涉及深层微架构、跨时钟域(CDC)、FPGA原型验证(Prototyping)或复杂系统级验证。
+2. 验证方法学：是否涉及高级UVM技巧、SystemVerilog最佳实践、覆盖率收敛或调试(Debug)效率提升。
+3. 工程落地价值：是否包含具体的代码示例、波形分析、架构图或真实的踩坑经验。
 
-必须严格返回 JSON：
-{"score": 8, "category": "分类名", "keywords": ["关键词1", "关键词2"], "reason": "一句话理由"}`;
+请归入以下分类之一：
+[🛠️ 验证方法学与UVM, 💻 RTL与微架构设计, 🔬 FPGA原型与系统验证, ⚙️ EDA工具与生态, 📝 硬件实战与其他]
+
+必须严格按以下 JSON 格式返回：
+{"score": 8, "category": "分类名", "keywords": ["关键词1", "关键词2"], "reason": "一句话推荐理由，突出对日常验证工作的工程价值"}`;
 
     try {
       const respText = await callAI(prompt);
@@ -212,24 +221,22 @@ async function main() {
   console.log("\n✅ 评分完成。");
 
   if (scoredArticles.length === 0) {
-    console.log("所有文章评分均失败，请检查 API 配置，退出。");
+    console.log("所有文章评分均失败，退出。");
     return;
   }
 
-  // 3. 排序并提取 Top N
   scoredArticles.sort((a, b) => b.score - a.score);
   const topArticles = scoredArticles.slice(0, config.topN);
 
-  // 4. AI 生成摘要与翻译
   console.log("📝 正在为 Top 推荐生成结构化摘要...");
   for (const article of topArticles) {
     const prompt = `你是一个资深的数字IC/FPGA验证架构师。请为以下文章生成摘要：
 标题：${article.title}
 
 要求：
-1. 用 4-6 句话概括核心内容，指出核心痛点和解决方案。
+1. 用 4-6 句话概括核心内容，指出文章解决的具体验证痛点或架构设计问题。
 2. 翻译标题为中文。
-3. 给出推荐给验证工程师的理由。
+3. 给出推荐给验证团队的理由。
 
 必须严格返回 JSON：
 {"zh_title": "中文标题", "summary": "摘要内容", "recommend_reason": "推荐理由"}`;
@@ -250,8 +257,7 @@ async function main() {
   }
   console.log("\n✅ 摘要生成完成。");
 
-  // 5. 趋势总结
-  console.log("📈 正在提炼今日验证技术趋势...");
+  console.log("📈 正在提炼技术趋势...");
   const titlesForTrend = topArticles.map(a => `- ${a.title} (${a.category})`).join("\n");
   const trendPrompt = `作为硬件验证专家，请根据今天的高分文章列表总结 2-3 个技术趋势，4-5句话，语言专业硬核：\n${titlesForTrend}`;
   let trendSummary = "暂无趋势总结。";
@@ -261,20 +267,18 @@ async function main() {
     console.log(`\n[趋势报错] -> ${e.message}`);
   }
 
-  // 6. 渲染 Markdown 日报
   console.log("📄 正在生成 Markdown 报告...");
   
-  let md = `# 🛠️ FPGA / 验证技术每日精选\n\n`;
+  let md = `# 🛠️ FPGA / 验证技术精选\n\n`;
   
-  // 使用 UTC+8 生成人类可读的时间字符串，格式如：2026-03-03 09:30:00
   const nowUTC8Str = toUTC8String(new Date());
   const formattedTime = nowUTC8Str.replace('T', ' ').slice(0, 19);
   md += `> 生成时间：${formattedTime} | 数据范围：过去 ${config.hours} 小时\n\n`;
   
-  md += `## 📝 今日看点\n\n${trendSummary}\n\n`;
+  md += `## 📝 行业视点\n\n${trendSummary}\n\n`;
   md += `---\n\n`;
   
-  md += `## 🏆 今日必读 (Top 3)\n\n`;
+  md += `## 🏆 深度必读 (Top 3)\n\n`;
   const top3 = topArticles.slice(0, 3);
   top3.forEach((a, i) => {
     md += `### ${i+1}. [${a.zh_title || a.title}](${a.link})\n`;
@@ -291,7 +295,7 @@ async function main() {
     return acc;
   }, {} as Record<string, number>);
   
-  md += "```mermaid\npie title 今日文章分类占比\n";
+  md += "```mermaid\npie title 文章分类占比\n";
   for (const [cat, count] of Object.entries(catCount)) {
     md += `  "${cat}" : ${count}\n`;
   }
@@ -313,9 +317,8 @@ async function main() {
     });
   }
 
-  // 写入文件
   await Bun.write(config.output, md);
-  console.log(`🎉 运行完毕！日报已保存至: ${config.output}`);
+  console.log(`🎉 运行完毕！报告已保存至: ${config.output}`);
 }
 
 main().catch(console.error);
