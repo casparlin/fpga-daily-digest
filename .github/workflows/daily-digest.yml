@@ -2,8 +2,14 @@ name: Daily AI Digest Generator
 
 on:
   schedule:
-    # 每天 UTC 时间 20:00 运行（对应北京时间早上 4:00）
-    - cron: '0 20 * * *'
+    # 0 18 * * 0,4 分别代表：
+    # 0: 分钟 (0分)
+    # 18: 小时 (UTC 18点)
+    # *: 日 (每天)
+    # *: 月 (每月)
+    # 0,4: 星期 (0=周日, 4=周四)
+    # 对应 UTC+8 (北京时间) 的周一和周五凌晨 2:00
+    - cron: '0 18 * * 0,4'
   workflow_dispatch: # 允许手动在 GitHub 网页触发
 
 jobs:
@@ -38,7 +44,7 @@ jobs:
           echo "Starting generation for $TODAY..."
           
           # 执行 Bun 脚本（注意路径已改为相对路径 scripts/digest.ts）
-          bun scripts/digest.ts --hours 24 --top-n 15 --lang zh --output "public/archives/${FILENAME}"
+          bun scripts/digest.ts --hours 96 --top-n 15 --lang zh --output "public/archives/${FILENAME}"
           
           # 将今天生成的归档文件复制一份作为首页固定的入口文件
           cp "public/archives/${FILENAME}" public/digest.md
