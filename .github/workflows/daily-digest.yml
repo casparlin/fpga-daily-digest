@@ -1,22 +1,16 @@
-name: Daily AI Digest Generator
+name: Weekly Digest (Personal API)
 
 on:
   schedule:
-    # 0 18 * * 0,4 分别代表：
-    # 0: 分钟 (0分)
-    # 18: 小时 (UTC 18点)
-    # *: 日 (每天)
-    # *: 月 (每月)
-    # 0,4: 星期 (0=周日, 4=周四)
-    # 对应 UTC+8 (北京时间) 的周一和周五凌晨 2:00
+    # 周日 18:00 UTC = 北京时间周一 02:00
     - cron: '0 18 * * 0'
-  workflow_dispatch: # 允许手动在 GitHub 网页触发
+  workflow_dispatch:
 
 jobs:
   generate-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write 
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -25,28 +19,34 @@ jobs:
       - name: Setup Bun runtime
         uses: oven-sh/setup-bun@v1
 
-      - name: Generate Digest via Bun
-        # 在此处注入你提到的所有环境变量
+      - name: Check personal API config
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_API_BASE: "https://api.moonshot.cn/v1"
-          OPENAI_MODEL: "kimi-k2.5"
+          OPENAI_API_BASE: ${{ vars.LLM_API_BASE }}
+          OPENAI_MODEL: ${{ vars.LLM_MODEL }}
+          OPENAI_API_KEY: ${{ secrets.LLM_API_KEY }}
+        run: |
+          if [ -z "$OPENAI_API_BASE" ] || [ -z "$OPENAI_MODEL" ] || [ -z "$OPENAI_API_KEY" ]; then
+            echo "缺少配置。请在仓库 Settings 里设置："
+            echo "  Variables: LLM_API_BASE, LLM_MODEL"
+            echo "  Secrets:   LLM_API_KEY"
+            exit 1
+          fi
+          echo "Using personal API: $OPENAI_API_BASE"
+          echo "Model: $OPENAI_MODEL"
+
+      - name: Generate Digest via Bun
+        env:
+          OPENAI_API_KEY: ${{ secrets.LLM_API_KEY }}
+          OPENAI_API_BASE: ${{ vars.LLM_API_BASE }}
+          OPENAI_MODEL: ${{ vars.LLM_MODEL }}
           TZ: 'Asia/Shanghai'
         run: |
-          # 创建统一对外的 public 目录和存放历史的 archives 目录
           mkdir -p public/archives
-          
-          # 获取当天日期，格式如 20260218
           TODAY=$(date +%Y%m%d)
           FILENAME="digest-${TODAY}.md"
-          
           echo "Starting generation for $TODAY..."
-          
-          # 执行 Bun 脚本（注意路径已改为相对路径 scripts/digest.ts）
           bun scripts/digest.ts --hours 96 --top-n 15 --lang zh --output "public/archives/${FILENAME}"
-          
-          # 将今天生成的归档文件复制一份作为首页固定的入口文件
+          test -f "public/archives/${FILENAME}"
           cp "public/archives/${FILENAME}" public/digest.md
 
       - name: Commit and Push changes
@@ -56,6 +56,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add public/
-          # 提交信息自动带上日期
-          git commit -m "docs: auto-generate daily digest for $(date +%Y%m%d)" || echo "No changes to commit"
+          git commit -m "docs: auto-generate weekly digest for $(date +%Y%m%d)" || echo "No changes to commit"
           git push

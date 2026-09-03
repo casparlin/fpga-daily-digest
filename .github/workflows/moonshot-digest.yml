@@ -1,0 +1,58 @@
+name: Manual Digest (Moonshot)
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Moonshot 模型名"
+        required: true
+        default: "kimi-k2.5"
+      hours:
+        description: "抓取时间窗（小时）"
+        required: false
+        default: "96"
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun runtime
+        uses: oven-sh/setup-bun@v1
+
+      - name: Generate Digest via Moonshot
+        env:
+          OPENAI_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+          OPENAI_API_BASE: "https://api.moonshot.cn/v1"
+          OPENAI_MODEL: ${{ inputs.model }}
+          TZ: 'Asia/Shanghai'
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "缺少 Secrets.MOONSHOT_API_KEY"
+            exit 1
+          fi
+          echo "Using Moonshot API"
+          echo "Model: $OPENAI_MODEL"
+
+          mkdir -p public/archives
+          TODAY=$(date +%Y%m%d)
+          FILENAME="digest-${TODAY}.md"
+          echo "Starting Moonshot generation for $TODAY..."
+          bun scripts/digest.ts --hours "${{ inputs.hours }}" --top-n 15 --lang zh --output "public/archives/${FILENAME}"
+          test -f "public/archives/${FILENAME}"
+          cp "public/archives/${FILENAME}" public/digest.md
+
+      - name: Commit and Push changes
+        env:
+          TZ: 'Asia/Shanghai'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/
+          git commit -m "docs: manual moonshot digest for $(date +%Y%m%d)" || echo "No changes to commit"
+          git push

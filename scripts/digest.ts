@@ -87,16 +87,28 @@ function parseJsonResponse(text: string) {
   return JSON.parse(cleanJson);
 }
 
+function resolveApiBase(raw: string): string {
+  const trimmed = raw.trim().replace(/\/+$/, '');
+  const markdownLink = trimmed.match(/^\[(https?:\/\/[^\]]+)\]\([^)]+\)$/);
+  return markdownLink ? markdownLink[1] : trimmed;
+}
+
+function getAIConfig() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const apiBase = resolveApiBase(process.env.OPENAI_API_BASE || "https://api.openai.com/v1");
+  const model = (process.env.OPENAI_MODEL || "").trim();
+
+  if (!apiKey) throw new Error("缺少 OPENAI_API_KEY");
+  if (!model) throw new Error("缺少 OPENAI_MODEL");
+
+  return { apiKey, apiBase, model };
+}
+
 // ----------------------------------------------------------------------
 // AI 接口调用
 // ----------------------------------------------------------------------
 async function callAI(prompt: string): Promise<string> {
-  const apiKey = process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY;
-  const apiBase = (process.env.OPENAI_API_BASE || "[https://api.openai.com/v1](https://api.openai.com/v1)").replace(/\/+$/, '');
-  const model = process.env.OPENAI_MODEL || "gpt-3.5-turbo";
-
-  if (!apiKey) throw new Error("缺少 API Key 环境变量");
-
+  const { apiKey, apiBase, model } = getAIConfig();
   const isMoonshot = apiBase.includes('moonshot');
   
   const body: any = {
@@ -174,7 +186,9 @@ async function fetchRSS(url: string, cutoffDate: Date): Promise<Article[]> {
 // ----------------------------------------------------------------------
 async function main() {
   const config = parseArgs();
+  const aiConfig = getAIConfig();
   console.log(`🚀 启动 FPGA/IC 验证资讯精选 | 时间范围: ${config.hours}h | 数量: ${config.topN}`);
+  console.log(`🔌 API: ${aiConfig.apiBase} | model: ${aiConfig.model}`);
   
   const cutoffDate = new Date(Date.now() - config.hours * 60 * 60 * 1000);
   
