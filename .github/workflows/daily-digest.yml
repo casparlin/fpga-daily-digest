@@ -32,7 +32,7 @@ jobs:
             exit 1
           fi
           echo "Using personal API: $OPENAI_API_BASE"
-          echo "Model: $OPENAI_MODEL"
+          echo "Models (try in order): $OPENAI_MODEL"
 
       - name: Generate Digest via Bun
         env:
