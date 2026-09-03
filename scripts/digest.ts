@@ -27,6 +27,11 @@ const RSS_FEEDS = [
   "https://www.adiuvoengineering.com/blog-feed.xml" // Adam Taylor 的 FPGA 开发实战博客
 ];
 
+const MAX_REQUESTS_PER_MINUTE = 5;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_BUFFER_MS = 500;
+const requestTimestamps: number[] = [];
+
 // 接口定义
 interface Article {
   title: string;
@@ -51,6 +56,24 @@ interface ScoredArticle extends Article {
 function toUTC8String(date: Date): string {
   // 加上 8 小时的毫秒数 (8 * 60 * 60 * 1000 = 28800000)
   return new Date(date.getTime() + 28800000).toISOString();
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForRateLimit(): Promise<void> {
+  const now = Date.now();
+  while (requestTimestamps.length && now - requestTimestamps[0] >= RATE_LIMIT_WINDOW_MS) {
+    requestTimestamps.shift();
+  }
+  if (requestTimestamps.length >= MAX_REQUESTS_PER_MINUTE) {
+    const waitMs = RATE_LIMIT_WINDOW_MS - (now - requestTimestamps[0]) + RATE_LIMIT_BUFFER_MS;
+    console.log(`\n[digest] rate limit ${MAX_REQUESTS_PER_MINUTE}/min, waiting ${Math.ceil(waitMs / 1000)}s`);
+    await sleep(waitMs);
+    return waitForRateLimit();
+  }
+  requestTimestamps.push(Date.now());
 }
 
 // ----------------------------------------------------------------------
@@ -111,6 +134,8 @@ function getAIConfig() {
 let selectedModel: string | null = null;
 
 async function callOneModel(apiKey: string, apiBase: string, model: string, prompt: string): Promise<string> {
+  await waitForRateLimit();
+
   const isMoonshot = apiBase.includes('moonshot');
   const body: any = {
     model,
@@ -163,6 +188,10 @@ async function callAI(prompt: string): Promise<string> {
     } catch (e: any) {
       lastError = e instanceof Error ? e : new Error(String(e));
       console.warn(`\n[digest] model ${model} failed: ${lastError.message}`);
+      if (lastError.message.includes("HTTP 429")) {
+        console.log("[digest] hit 429, cooling down 20s before next model");
+        await sleep(20_000);
+      }
     }
   }
 
@@ -220,6 +249,7 @@ async function main() {
   const aiConfig = getAIConfig();
   console.log(`🚀 启动 FPGA/IC 验证资讯精选 | 时间范围: ${config.hours}h | 数量: ${config.topN}`);
   console.log(`🔌 API: ${aiConfig.apiBase} | models: ${aiConfig.models.join(" -> ")}`);
+  console.log(`⏱️ Rate limit: ${MAX_REQUESTS_PER_MINUTE} requests / ${RATE_LIMIT_WINDOW_MS / 1000}s`);
   
   const cutoffDate = new Date(Date.now() - config.hours * 60 * 60 * 1000);
   
