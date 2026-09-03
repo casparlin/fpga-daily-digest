@@ -93,29 +93,29 @@ function resolveApiBase(raw: string): string {
   return markdownLink ? markdownLink[1] : trimmed;
 }
 
+function parseModelList(raw: string): string[] {
+  return raw.split(/[,\n]/).map((s) => s.trim()).filter(Boolean);
+}
+
 function getAIConfig() {
   const apiKey = process.env.OPENAI_API_KEY;
   const apiBase = resolveApiBase(process.env.OPENAI_API_BASE || "https://api.openai.com/v1");
-  const model = (process.env.OPENAI_MODEL || "").trim();
+  const models = parseModelList(process.env.OPENAI_MODEL || "");
 
   if (!apiKey) throw new Error("缺少 OPENAI_API_KEY");
-  if (!model) throw new Error("缺少 OPENAI_MODEL");
+  if (models.length === 0) throw new Error("缺少 OPENAI_MODEL");
 
-  return { apiKey, apiBase, model };
+  return { apiKey, apiBase, models };
 }
 
-// ----------------------------------------------------------------------
-// AI 接口调用
-// ----------------------------------------------------------------------
-async function callAI(prompt: string): Promise<string> {
-  const { apiKey, apiBase, model } = getAIConfig();
+let selectedModel: string | null = null;
+
+async function callOneModel(apiKey: string, apiBase: string, model: string, prompt: string): Promise<string> {
   const isMoonshot = apiBase.includes('moonshot');
-  
   const body: any = {
-    model: model,
+    model,
     messages: [{ role: "user", content: prompt }]
   };
-
   if (!isMoonshot) {
     body.temperature = 0.3;
   }
@@ -135,7 +135,38 @@ async function callAI(prompt: string): Promise<string> {
   }
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  const content = data.choices?.[0]?.message?.content;
+  if (typeof content !== "string" || !content.trim()) {
+    throw new Error(`empty response from ${model}`);
+  }
+  return content;
+}
+
+// ----------------------------------------------------------------------
+// AI 接口调用
+// ----------------------------------------------------------------------
+async function callAI(prompt: string): Promise<string> {
+  const { apiKey, apiBase, models } = getAIConfig();
+  const queue = selectedModel
+    ? [selectedModel, ...models.filter((m) => m !== selectedModel)]
+    : models;
+
+  let lastError: Error | null = null;
+  for (const model of queue) {
+    try {
+      const text = await callOneModel(apiKey, apiBase, model, prompt);
+      if (selectedModel !== model) {
+        selectedModel = model;
+        console.log(`\n[digest] using model: ${model}`);
+      }
+      return text;
+    } catch (e: any) {
+      lastError = e instanceof Error ? e : new Error(String(e));
+      console.warn(`\n[digest] model ${model} failed: ${lastError.message}`);
+    }
+  }
+
+  throw lastError || new Error("all models failed");
 }
 
 // ----------------------------------------------------------------------
@@ -188,7 +219,7 @@ async function main() {
   const config = parseArgs();
   const aiConfig = getAIConfig();
   console.log(`🚀 启动 FPGA/IC 验证资讯精选 | 时间范围: ${config.hours}h | 数量: ${config.topN}`);
-  console.log(`🔌 API: ${aiConfig.apiBase} | model: ${aiConfig.model}`);
+  console.log(`🔌 API: ${aiConfig.apiBase} | models: ${aiConfig.models.join(" -> ")}`);
   
   const cutoffDate = new Date(Date.now() - config.hours * 60 * 60 * 1000);
   
