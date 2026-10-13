@@ -1,38 +1,38 @@
 # 🛠️ FPGA / 验证技术精选
 
-> 生成时间：2026-09-28 05:14:43 | 数据范围：过去 96 小时
+> 生成时间：2026-10-13 14:25:10 | 数据范围：过去 96 小时
 
 ## 📝 行业视点
 
-当前硬件验证领域正加速向多裸片异构集成演进，NoC架构与UCIe协议成为多Die互连的核心，推动EDA工具突破传统2D边界以应对3D-IC的热力、信号完整性与IP管理挑战。AI代理正跨越设计孤岛，从L1辅助到L5全自主级别演进，实现证据驱动的自动化验证流程，Synopsys与TSMC的合作进一步加速agentic AI在先进节点的落地。晶体管层面，A7 CFET与A10 Nanosheet的寄生参数与可靠性对比，叠加TSMC AI时代路线图，正驱动设备建模向量子与高性能计算场景深度优化，验证工程师需重构覆盖率策略以应对这些范式转移。
+当前硬件验证领域正涌现三大硬核趋势：AI加速器微架构层面正强化片上实时监控机制，以精准检测并缓解bit-flip攻击，提升RTL级可靠性与安全验证覆盖率；EDA工具链加速融入Agentic AI，推动设计自动化从传统脚本向自主代理演进，重塑验证流程与DAC生态；同时，针对AI内存瓶颈与边缘功耗墙，压缩IP、低压基础IP及高功率PSU方案密集落地，要求验证工程师深化对低电压域、功耗感知仿真与跨模态量子互联的形式化验证能力。
 
 ---
 
 ## 🏆 深度必读 (Top 3)
 
-### 1. [用于多裸片设备的片上网络（NoC）](https://semiengineering.com/a-network-on-chip-noc-for-multi-die-devices/)
-**评分**: 6/10 | **分类**: 💻 RTL与微架构设计 | **标签**: `NoC` `Multi-Die` `Chiplet Interconnect` `System-Level Architecture`
+### 1. [片上监视器检测AI加速器中的比特翻转攻击（佛罗里达大学、德克萨斯大学达拉斯分校、伦斯勒理工学院）](https://semiengineering.com/on-chip-monitors-detect-bit-flip-attacks-in-ai-accelerators-uf-ut-dallas-rpi/)
+**评分**: 6/10 | **分类**: 💻 RTL与微架构设计 | **标签**: `AI加速器` `片上监控器` `位翻转攻击` `硬件安全` `故障检测`
 
-> **💡 推荐理由**：推荐给验证团队，因为文章精准剖析了多裸片NoC的核心验证痛点（如跨die协议检查、多域同步和性能验证），提供了可落地的架构洞察与验证策略，能直接帮助团队应对先进封装技术中的复杂互连验证挑战，提升验证完备性和效率。
-
-**摘要**：
-本文提出了一种专为多裸片（multi-die）设备设计的片上网络（NoC）架构，重点解决跨die互连中的可扩展性、延迟和带宽瓶颈等架构设计问题。它针对异构集成场景下的路由拓扑、接口标准化和流量管理机制进行了优化，以应对多时钟域、电源域以及协议一致性验证的复杂性痛点。文章详细分析了NoC在2.5D/3D封装中的通信挑战，提供了降低验证覆盖盲区和性能瓶颈的设计方法。通过引入自适应路由和标准化链路层，有效简化了多裸片系统的功能正确性和系统级验证流程。该方案显著提升了多die SoC的整体可靠性和验证效率。
-
-### 2. [3D芯片推动EDA进入新领域](https://semiengineering.com/3d-chips-push-eda-into-new-territory/)
-**评分**: 6/10 | **分类**: ⚙️ EDA工具与生态 | **标签**: `3D IC` `chiplet` `multi-die EDA` `system-level verification`
-
-> **💡 推荐理由**：强烈推荐给验证团队，因其精准定位了3D芯片验证中的多die协同、热效应与垂直互连等关键架构痛点，可帮助团队提前构建适应先进封装的验证流程与工具链，提升对下一代芯片设计的应对能力与效率。
+> **💡 推荐理由**：验证团队可直接借鉴其片上监控架构与故障注入检测方法，用于AI加速器安全验证、覆盖率增强及侧信道/故障攻击测试用例设计，有效弥补传统功能验证在硬件安全威胁上的盲区，提升芯片鲁棒性验证效率。
 
 **摘要**：
-文章深入分析了3D芯片堆叠与异构集成如何迫使EDA工具突破传统二维设计边界，重点揭示了验证环节的核心痛点。验证团队面临多die协同仿真、TSV垂直互连信号完整性检查以及跨层热-电耦合效应建模等全新架构挑战。传统平面验证方法无法有效覆盖电源分配网络复杂性和系统级功能正确性验证。文章强调需要引入支持3D感知的形式化验证、硬件加速仿真和多物理场协同验证方法论。这些变革直接推动EDA厂商开发面向先进封装的验证解决方案，以保障3D IC的可靠性与可制造性。
+本文提出在AI加速器中集成片上监视器，用于实时检测针对神经网络权重或激活值的比特翻转攻击（如故障注入或Rowhammer类攻击）。该方案解决了AI硬件加速器在面对恶意故障注入时缺乏高效、低开销运行时检测机制的架构设计痛点，传统验证方法难以覆盖动态安全威胁。通过监控关键信号异常或计算一致性，监视器能及时发现并报告攻击，提升系统安全性。文章重点讨论了监视器的硬件实现、检测精度与面积/功耗开销权衡，以及在FPGA/ASIC上的验证策略。这为数字IC验证团队提供了针对AI芯片安全属性的新型验证思路和测试基准。
 
-### 3. [PCIe的下一章：与UCIe的Chiplet集成](https://blogs.sw.siemens.com/verificationhorizons/2026/09/25/the-next-chapter-for-pcie-chiplet-integration-with-ucie/)
-**评分**: 6/10 | **分类**: ⚙️ EDA工具与生态 | **标签**: `UCIe` `PCIe` `Chiplet` `Die-to-Die`
+### 2. [MicroZed Chronicles：伦敦FPGA Horizons：AI、安全与FPGA工程的未来](https://www.adiuvoengineering.com/post/microzed-chronicles-fpga-horizons-london-ai-security-and-the-future-of-fpga-engineering)
+**评分**: 5/10 | **分类**: 📝 硬件实战与其他 | **标签**: `FPGA AI加速` `硬件安全` `FPGA工程趋势` `行业展望`
 
-> **💡 推荐理由**：推荐给验证团队，因为文章直接针对Chiplet时代PCIe验证的新兴痛点（如跨Die协议验证和UCIe集成），提供了实用的架构设计和验证方法论，有助于团队提前布局先进封装验证流程，提升多Die系统验证效率和覆盖率。
+> **💡 推荐理由**：验证团队可从中获取AI加速器与安全IP在FPGA上的最新验证策略与架构洞察，帮助解决异构系统覆盖率、安全属性验证及未来工具链适配等实际痛点，提升复杂SoC/FPGA项目的验证效率与质量。
 
 **摘要**：
-本文探讨了PCIe协议在Chiplet架构中的演进，重点介绍如何通过UCIe标准实现多Die间的高速互连与PCIe功能的无缝集成。文章分析了传统单芯片PCIe验证方法在Chiplet场景下的局限性，包括跨Die协议一致性、时序同步和信号完整性等架构设计挑战。它提出了针对UCIe-PCIe桥接的验证策略，解决了多物理层接口的覆盖率不足和系统级互操作性验证痛点。通过案例展示了如何构建分层验证环境，以应对Chiplet集成带来的复杂性。核心贡献在于为验证工程师提供了可扩展的架构框架，确保PCIe在异构Chiplet系统中的可靠性和性能。
+文章报道了伦敦FPGA Horizons活动，聚焦AI加速、硬件安全与FPGA工程未来趋势。核心讨论了在FPGA上部署AI推理时面临的验证痛点，如异构计算架构中软硬件协同验证的复杂性、时序与资源约束下的功能覆盖不足。同时强调安全设计中的架构问题，包括侧信道攻击防护、安全启动与加密IP的形式化验证挑战。活动还探讨了未来FPGA工具链与验证方法学的演进，以应对日益增长的系统级复杂度和可靠性需求。这些内容直接针对验证团队在AI-FPGA融合与高安全应用中的架构设计与验证闭环难题。
+
+### 3. [CTO Interview with Dr. Zakir Syed of ClockEdge](https://semiwiki.com/eda/clockedge/374633-cto-interview-with-dr-zakir-syed-of-clockedge/)
+**评分**: 4/10 | **分类**: ⚙️ EDA工具与生态 | **标签**: `时钟域交叉（CDC）` `SoC验证` `半导体EDA` `验证自动化`
+
+> **💡 推荐理由**：无
+
+**摘要**：
+摘要生成失败。
 
 ---
 
@@ -40,50 +40,52 @@
 
 ```mermaid
 pie title 文章分类占比
-  "💻 RTL与微架构设计" : 1
-  "⚙️ EDA工具与生态" : 8
-  "📝 硬件实战与其他" : 6
+  "💻 RTL与微架构设计" : 2
+  "📝 硬件实战与其他" : 10
+  "⚙️ EDA工具与生态" : 3
 ```
 
 ## 📋 更多分类好文
 
+### 💻 RTL与微架构设计
+
+- [**Chips&Media 以新压缩IP瞄准AI内存瓶颈**](https://semiwiki.com/ip/chipsmedia/374498-chipsmedia-targets-ai-memory-bottlenecks-with-new-compression-ip/) - *semiwiki.com* (4分)
+  > 文章介绍Chips&Media推出的新型压缩IP，专门针对AI加速器中的内存带宽瓶颈问题，通过高效压缩权重和激活数据来显著降低内存访问需求。该IP在架构设计上优化了压缩比与延迟的平衡，支持与现有内存控制器和AI计算单元的无缝集成。核心验证痛点包括确保压缩/解压缩过程的数据完整性（无损或可控有损）、高吞吐场景下的功能正确性验证，以及带宽节省效果的系统级性能验证。文章还探讨了在FPGA原型验证和ASIC实现中面临的接口兼容性、功耗和时序收敛挑战。这些内容直接关联数字IC验证中对AI专用IP的覆盖率规划和断言设计。总体而言，该方案为解决AI芯片内存墙问题提供了可验证的架构思路。
+
 ### ⚙️ EDA工具与生态
 
-- [**管理3D-IC设计与IP**](https://semiengineering.com/managing-3d-ic-design-and-ip/) - *semiengineering.com* (5分)
-  > 文章深入探讨了3D-IC（三维集成电路）设计中IP管理的核心挑战，特别是在多die堆叠和异构集成架构下。它明确指出验证痛点包括跨die接口的信号完整性与时序验证困难、TSV（硅通孔）建模不准确导致的功能与性能偏差，以及热效应对功耗、可靠性和系统级行为的复杂影响。架构设计问题聚焦于IP复用策略失效、die-to-die通信协议的一致性保障，以及如何在分层设计中实现有效的层次化验证。文章强调通过早期系统级建模、先进验证方法学（如多物理场协同仿真）和IP标准化管理来缓解这些风险。总体提供了实用的管理框架，帮助团队应对3D-IC带来的验证复杂性和设计收敛难题。
+- [**是德科技通过代理式AI推进其设计软件**](https://semiwiki.com/eda/374576-keysight-advances-its-design-software-with-agentic-ai/) - *semiwiki.com* (4分)
+  > 文章介绍了Keysight将代理式人工智能（Agentic AI）深度集成到其设计软件平台中，以应对数字IC和FPGA验证中的核心挑战。传统验证流程常受困于仿真周期过长、复杂bug调试耗时以及功能覆盖率难以快速收敛等痛点。通过自主AI代理，软件可自动生成智能测试激励、实时分析失败日志并推荐架构级修复方案，显著缩短验证迭代时间。这直接解决了验证架构设计中人工依赖过高和可扩展性不足的问题，使团队能更高效地处理大规模SoC和FPGA设计。整体而言，该进展推动了从被动验证向主动智能验证的范式转变，提升了整体设计闭环效率。
 
-- [**当AI代理跨越芯片设计孤岛时**](https://semiengineering.com/when-ai-agents-cross-chip-design-silos/) - *semiengineering.com* (5分)
-  > 文章探讨了AI代理如何打破芯片设计中传统的团队孤岛，特别聚焦于验证流程中的跨领域协作难题。它精准解决了RTL设计、功能验证、物理实现等环节因数据割裂和沟通壁垒导致的验证覆盖不全、缺陷发现滞后以及迭代效率低下等核心痛点。通过多智能体系统实现自动化知识共享与任务编排，显著提升验证架构的端到端集成能力。文章强调当前验证架构设计中碎片化工具链和人工交接的瓶颈，并提出基于AI代理的统一智能平台方案。该方案支持实时反馈闭环和自适应验证策略，有效缩短复杂SoC的验证周期。整体为数字IC/FPGA验证团队提供了从孤岛式工作流向协同智能架构转型的实践路径。
-
-- [**EDA’s Future Is Evidence-Driven Automation**](https://semiengineering.com/edas-future-is-evidence-driven-automation/) - *semiengineering.com* (5分)
-  > 摘要生成失败。
-
-- [**Autonomy Levels For Design Agents: L1 To L5 Explained**](https://semiengineering.com/autonomy-levels-for-design-agents-l1-to-l5-explained/) - *semiengineering.com* (4分)
-  > 摘要生成失败。
-
-- [**HAL靠边站，新AI像芯片设计师一样思考**](https://www.eejournal.com/article/move-over-hal-new-ai-thinks-like-a-chip-designer/) - *eejournal.com* (4分)
-  > 文章介绍了一种新型AI系统，能像资深芯片设计师一样进行架构决策、布局优化和设计迭代。它重点解决了传统数字IC/FPGA设计中人工探索设计空间耗时过长、PPA权衡效率低下以及验证覆盖率收敛缓慢的核心痛点。通过强化学习与生成式模型，AI可自动生成高质量的芯片布局、RTL架构建议和验证策略，大幅缩短设计周期。这减少了验证中因人为疏漏导致的bug逃逸，并提升了复杂SoC的验证完备性。最终为验证架构师提供了智能化工具，以应对日益增长的设计复杂度和验证瓶颈。
-
-- [**Synopsys与台积电合作，利用Agentic AI和先进设计加速AI系统创新**](https://www.eejournal.com/industry_news/synopsys-and-tsmc-partner-to-accelerate-ai-systems-innovation-with-agentic-ai-and-advanced-design/) - *eejournal.com* (3分)
-  > 本文介绍了Synopsys与TSMC的战略合作，通过集成Agentic AI代理和先进工艺设计工具，加速AI芯片系统的创新与落地。核心解决了先进节点（如3nm/2nm）下AI加速器验证中覆盖率爆炸、仿真周期过长以及多die异构集成架构探索效率低下的痛点。Agentic AI可自主规划验证策略、生成测试激励并优化回归流程，显著降低人工干预。合作还强化了设计-验证闭环，支持早期架构权衡与功耗/性能/面积协同优化。验证团队可借此应对复杂AI系统中的时序、协议与功能安全验证挑战。整体推动了EDA工具向智能化、自动化方向演进。
+- [**DAC 2027 开放投稿征集，AI 重塑芯片设计**](https://semiwiki.com/events/374512-dac-2027-opens-call-for-contributions-as-ai-reshapes-chip-design/) - *semiwiki.com* (2分)
+  > 文章宣布DAC 2027会议正式开放投稿征集，聚焦AI技术如何全面重塑芯片设计与验证流程。随着生成式AI在RTL代码生成、架构探索和优化中的广泛应用，传统验证方法面临核心痛点：AI生成设计的可解释性差、功能覆盖率难以保证以及形式验证复杂度激增。文章深入探讨验证架构如何演进以适应AI驱动设计，重点解决异构SoC验证、ML加速器硬件正确性检查以及自动化测试激励可靠性等架构设计问题。强调亟需构建融合AI辅助的新型验证方法论，确保设计正确性、安全性和可调试性。这对验证团队提出了从工具链到方法论的系统性升级要求。
 
 ### 📝 硬件实战与其他
 
-- [**为AI时代设计芯片：台积电路线图意味着什么**](https://semiwiki.com/semiconductor-manufacturers/tsmc/373986-designing-chips-for-the-ai-era-what-tsmcs-roadmap-means/) - *semiwiki.com* (4分)
-  > 文章分析了台积电针对AI芯片的先进工艺与封装路线图，包括N3/N2节点、CoWoS、SoIC等技术如何支撑高算力、高带宽AI加速器设计。它重点解决了多芯片异构集成带来的架构挑战，如die-to-die互连复杂性、功耗密度与热管理问题。验证痛点集中在系统级多die协同验证、高速接口时序收敛以及先进节点下的可靠性与可测性保障。文章强调验证架构需从传统单芯片转向3D/2.5D封装感知的分层验证策略。通过解读路线图，帮助团队提前规划验证工具链与方法论，以应对AI时代芯片规模爆炸式增长。
+- [**Quantum Source 推出 QS-LINK 实现跨模态量子计算机的连接与扩展**](https://www.eejournal.com/industry_news/quantum-source-unveils-qs-link-to-connect-and-scale-quantum-computers-across-modalities/) - *eejournal.com* (4分)
+  > 文章介绍了 Quantum Source 公司发布的 QS-LINK 技术，该技术旨在连接和扩展不同模态的量子计算机。它解决了量子计算系统中不同硬件平台之间互操作性差的问题，特别是在扩展量子比特数量和跨模态通信方面的架构挑战。对于验证团队而言，这涉及到复杂的接口协议验证、时序同步以及混合信号系统的验证痛点。QS-LINK 提供了一种标准化的链接方式，有助于简化大规模量子系统的设计和验证流程。通过支持多种量子模态的互连，它缓解了传统量子架构中的可扩展性瓶颈。
 
-- [**比较A7 CFET与A10纳米片FET：从寄生效应到芯片可靠性（TUM、UNIMORE、应用材料公司）**](https://semiengineering.com/comparing-a7-cfet-and-a10-nanosheet-fets-from-parasitics-to-chip-reliability-tum-unimore-applied-materials/) - *semiengineering.com* (3分)
-  > 本文系统比较了A7节点CFET与A10节点纳米片FET从器件寄生参数到芯片级可靠性的全面差异。文章重点分析了两种先进晶体管结构的寄生电容、电阻及其对电路延迟、功耗和信号完整性的影响。它直接解决了先进工艺中3D晶体管寄生提取不准确、导致时序收敛和功耗验证困难的核心验证痛点。研究进一步量化了寄生效应对芯片可靠性指标（如电迁移、热可靠性和TDDB）的影响，揭示了架构选择中的可靠性权衡问题。通过TCAD仿真与实验数据，为验证团队提供了针对CFET与纳米片技术的建模与验证方法论指导。总体为下一代数字IC架构设计和可靠性验证流程优化提供了关键技术洞察。
+- [**使用低压基础IP克服边缘AI功耗墙**](https://semiwiki.com/artificial-intelligence/374757-overcoming-the-edge-ai-power-wall-with-low-voltage-foundation-ip/) - *semiwiki.com* (3分)
+  > 文章聚焦边缘AI设备因算力需求激增而面临的功耗墙瓶颈，提出采用低压基础IP（如低电压标准单元库、SRAM和接口IP）作为核心解决方案，以显著降低动态与静态功耗。它详细分析了低电压操作带来的架构设计挑战，包括多电压域划分、时序收敛困难以及可靠性风险（如软错误和老化效应）。针对验证痛点，文章强调了在低电压条件下进行功耗完整性分析、跨电压域接口验证以及PVT角点覆盖的复杂性。通过实际案例展示了如何利用先进验证方法学（如形式验证与仿真结合）确保低压IP的正确集成与性能达标。最终，该方案帮助设计团队在边缘设备严格功耗预算下实现AI推理的能效优化，同时降低验证迭代成本。
 
-- [**面向下一代量子应用的AI驱动器件建模**](https://semiengineering.com/ai-driven-device-modeling-for-next-generation-quantum-applications/) - *semiengineering.com* (3分)
-  > 本文提出了一种基于AI的器件建模方法，专门针对下一代量子计算与量子传感应用中的复杂器件行为进行高效准确建模。传统物理仿真和手工建模在处理量子器件的非线性、噪声敏感性和多物理场耦合时面临精度不足、计算开销巨大以及难以覆盖工艺变异的验证痛点。文章通过机器学习驱动的代理模型和数据增强技术，构建了可快速迭代的器件模型，显著加速了从器件级到系统级的验证闭环。该方法解决了量子相关IC/FPGA架构设计中模型保真度与仿真速度难以兼顾的核心架构问题，并支持不确定性量化以提升验证覆盖率。整体框架可无缝集成到现有数字验证流程中，为量子-经典混合系统的早期验证提供可靠基础。
+- [**COSMAC：世界首款CMOS微处理器的漫长、真实且永无止境的故事（第二部分）**](https://www.eejournal.com/article/cosmac-the-long-true-and-never-ending-story-of-the-worlds-first-cmos-microprocessors-part-2/) - *eejournal.com* (3分)
+  > 本文深入回顾了RCA COSMAC系列（尤其是CDP1802）作为世界首款商用CMOS微处理器的完整研发历程与架构演进细节，重点剖析了早期CMOS工艺下低功耗、高噪声容限与辐射硬化设计的关键权衡。文章揭示了在无现代EDA工具时代，验证团队面临的核心痛点：如何通过手工仿真、原型板级测试与有限的逻辑分析仪验证复杂的指令集架构（ISA）时序与中断处理正确性。它详细讨论了静态逻辑设计带来的异步电路验证挑战，以及如何确保在极端温度与太空环境下的功能完整性。通过真实案例展示了架构师如何解决功耗-性能-可靠性三角矛盾，为现代低功耗SoC验证提供了历史借鉴。整体强调了早期验证方法论对当今FPGA/ASIC验证流程的启示。
 
-- [**Mixx Technologies的Vivek Raghuraman CEO访谈**](https://semiwiki.com/ceo-interviews/373738-ceo-interview-with-vivek-raghuraman-of-mixx-technologies/) - *semiwiki.com* (3分)
-  > 本文通过采访Mixx Technologies CEO Vivek Raghuraman，深入探讨了数字IC与FPGA验证中面临的核心挑战。文章重点指出了复杂SoC和多芯片系统中传统验证方法在覆盖率闭合、调试效率和可扩展性方面的痛点。Raghuraman分享了公司在验证架构设计上的创新思路，包括先进仿真、仿真加速和工具链集成策略，以应对异构设计和chiplet带来的复杂性。内容还涉及如何通过优化验证流程缩短上市时间并提升可靠性。整体为验证架构师提供了解决大规模设计验证瓶颈的实践见解。
+- [**聆听未来：深入 sensiBel 的光学 MEMS 革命**](https://www.eejournal.com/fish_fry/listening-to-the-future-inside-sensibells-optical-mems-revolution/) - *eejournal.com* (3分)
+  > 文章详细剖析了 sensiBel 光学 MEMS 麦克风如何通过激光干涉传感架构彻底革新传统电容式 MEMS 设计，解决了高噪声、有限动态范围和电磁干扰敏感等核心性能瓶颈。它重点阐述了光学-机械-电子多物理场耦合系统的架构设计挑战，包括如何实现高精度光路对准与信号链的鲁棒性。针对验证痛点，文章指出传统数字验证方法难以覆盖 MEMS 非线性、环境漂移和光学噪声建模问题，提出了基于硬件加速仿真与混合信号形式验证的协同验证策略。通过可验证性设计（DfV）原则，团队能够提前发现架构级缺陷并确保量产一致性。最终，该方案为高保真音频 SoC 验证提供了可扩展的参考架构。
 
-- [**Thintronics公司Stefan Pastine博士的CEO访谈**](https://semiwiki.com/ceo-interviews/373713-ceo-interview-with-dr-stefan-pastine-of-thintronics/) - *semiwiki.com* (3分)
-  > 本文通过与Thintronics CEO Dr. Stefan Pastine的访谈，深入探讨了其超薄高性能介电材料技术如何革新高速PCB和封装设计。核心内容聚焦于传统厚介电层导致的信号损耗、串扰和延迟问题，这些直接加剧了数字IC/FPGA中高速接口（如SerDes、PCIe、DDR）的信号完整性（SI）和电源完整性（PI）验证复杂度。文章指出该技术通过实现更薄、更低损耗的介质，从根本上降低了高频信号衰减和阻抗不匹配风险，从而简化了验证架构中的时序收敛、眼图分析和多板级协同仿真挑战。它解决了验证团队在先进工艺节点下面临的材料限制导致的过度悲观建模和反复迭代验证痛点，推动从“事后验证”向“设计即验证”的架构转变。整体强调材料创新对提升验证效率和系统可靠性的关键作用。
+- [**碳点界面实现二维半导体上的超薄高κ电介质（UIUC、NETL、Argonne、Monash）**](https://semiengineering.com/carbon-dot-interface-enables-ultrathin-high-%ce%ba-dielectrics-on-2d-semiconductors-uiuc-netl-argonne-monash/) - *semiengineering.com* (2分)
+  > 该文章提出利用碳点作为界面层，成功在二维半导体表面实现超薄高κ电介质的均匀高质量沉积。这直接解决了传统ALD工艺因2D材料表面惰性导致的成核困难、针孔缺陷、界面陷阱密度高和泄漏电流大等核心问题。在数字IC/FPGA验证架构中，这些界面缺陷会造成器件模型不准确、性能变异性剧增以及可靠性仿真偏差，极大增加了功耗、时序和功能验证的复杂度。通过碳点界面优化，文章显著提升了2D FET的栅控能力和电学稳定性，为超薄栅介质架构设计提供了可靠基础。验证团队可据此改进SPICE模型和PDK，减少硅前仿真与实测偏差，加速先进节点异质集成器件的验证闭环。
 
-- [**ScienceSoft CEO Nick Kurayev 访谈**](https://semiwiki.com/ceo-interviews/374075-ceo-interview-with-nick-kurayev-of-sciencesoft/) - *semiwiki.com* (3分)
-  > 本文是对ScienceSoft CEO Nick Kurayev的深度访谈，聚焦软件系统开发与验证实践。文章指出复杂企业级系统中验证覆盖率不足、自动化测试集成困难以及遗留代码验证效率低下等核心痛点。它解决了验证架构设计中如何将测试左移、构建可扩展验证框架以及平衡敏捷迭代与全面回归测试的问题。Kurayev分享了ScienceSoft通过定制化验证策略和工具链帮助客户降低缺陷逃逸率的经验。这些见解对数字IC/FPGA验证团队在UVM环境构建、覆盖率驱动验证和CI/CD流水线优化方面具有直接借鉴价值。整体强调了跨领域验证方法论的迁移应用。
+- [**芯片产业一周回顾**](https://semiengineering.com/chip-industry-week-in-review-159/) - *semiengineering.com* (2分)
+  > 本文回顾了芯片行业本周的重要动态，重点关注先进制程和AI芯片的验证挑战。文章指出多芯片封装设计中的互连验证痛点，如信号完整性和热管理问题。它讨论了在复杂FPGA架构中实现高效覆盖率闭合的架构设计难题。针对仿真速度瓶颈，提出了使用硬件加速验证的解决方案。此外，还强调了软件硬件协同验证在系统级设计中的重要性。这些内容为验证工程师提供了应对当前技术趋势的实用见解。
+
+- [**英飞凌推出面向下一代AI服务器电源架构的27 kW三相PSU解决方案**](https://www.eejournal.com/industry_news/infineon-introduces-27-kw-three-phase-psu-solution-for-next-generation-ai-server-power-architectures/) - *eejournal.com* (2分)
+  > 本文介绍了英飞凌针对AI服务器高功耗需求推出的27 kW三相PSU参考解决方案，采用先进数字控制和功率器件实现高效三相功率转换。该方案重点解决了下一代AI数据中心电源架构中功率密度不足、转换效率低下以及动态负载波动下的稳定性问题。通过模块化三相设计和优化的PFC/LLC拓扑，它显著降低了谐波失真并提升了系统可靠性。对于数字IC/FPGA验证而言，文章揭示了验证复杂电源管理控制逻辑、实时故障检测与冗余切换机制的痛点。同时强调了在高电流瞬态和热约束下进行系统级验证的架构挑战。这为验证工程师提供了针对AI工作负载电源子系统的验证策略参考。
+
+- [**机器人精度：iC-Haus亮相electronica与SPS 2026**](https://www.eejournal.com/industry_news/precision-for-robotics-ic-haus-at-electronica-and-sps-2026-at-this-years-autumn-trade-shows-ic-haus-focuses-on-highly-integrated-encoder-and-sensor-ics-for-precise-position-sensing/) - *eejournal.com* (2分)
+  > 文章介绍了iC-Haus在electronica和SPS 2026秋季贸易展上重点展示的高度集成编码器与传感器iC，专为机器人精确位置传感设计。这些器件通过单芯片集成解决了多传感器融合与高精度位置反馈的架构挑战。核心验证痛点在于混合信号接口的时序精度、噪声鲁棒性以及实时位置解码的覆盖率不足。架构设计上强调了高度集成带来的验证复杂性，包括多协议兼容性与FPGA原型中的精度建模难题。文章提供了针对编码器IC的验证策略建议，帮助应对仿真与硅后验证中的精度偏差问题。整体聚焦于提升机器人控制系统的可靠位置传感验证效率。
+
+- [**Viscom将在electronica 2026首发全新iX7059 SMT Edition 3D在线AXI系统**](https://www.eejournal.com/industry_news/viscom-to-premiere-new-ix7059-smt-edition-3d-inline-axi-at-electronica-2026/) - *eejournal.com* (2分)
+  > 文章介绍了Viscom公司计划在electronica 2026展会上首推的新款iX7059 SMT Edition 3D Inline AXI（自动X射线检测）系统，专为SMT生产线设计。该系统通过先进的3D成像技术解决了传统2D AXI在复杂焊点、BGA空洞、隐藏缺陷及高密度PCB检测中覆盖率不足和误报率高的痛点。它优化了在线检测架构，实现高速、高精度的实时缺陷识别与分类，提升了制造验证的效率和可靠性。针对先进封装和多层板的验证挑战，系统集成AI辅助分析，减少漏检并支持闭环质量控制。这直接缓解了硬件验证团队在原型到量产阶段因制造缺陷导致的信号完整性问题和调试困难。整体上，该发布聚焦于提升SMT质量验证的自动化与精准度。
 
