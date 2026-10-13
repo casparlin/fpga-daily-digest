@@ -30,6 +30,8 @@ const RSS_FEEDS = [
 const MAX_REQUESTS_PER_MINUTE = 5;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_BUFFER_MS = 500;
+const AI_REQUEST_TIMEOUT_MS = 120_000; // 120s 超时，适应较慢的模型
+const AI_MAX_RETRIES = 1; // 每个模型失败后多重试 1 次
 const requestTimestamps: number[] = [];
 
 // 接口定义
@@ -134,37 +136,65 @@ function getAIConfig() {
 let selectedModel: string | null = null;
 
 async function callOneModel(apiKey: string, apiBase: string, model: string, prompt: string): Promise<string> {
-  await waitForRateLimit();
+  let lastError: Error | null = null;
 
-  const isMoonshot = apiBase.includes('moonshot');
-  const body: any = {
-    model,
-    messages: [{ role: "user", content: prompt }]
-  };
-  if (!isMoonshot) {
-    body.temperature = 0.3;
+  for (let attempt = 0; attempt <= AI_MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      console.log(`\n[digest] retrying model ${model} (attempt ${attempt + 1}/${AI_MAX_RETRIES + 1})`);
+      await sleep(3000);
+    }
+
+    await waitForRateLimit();
+
+    const isMoonshot = apiBase.includes('moonshot');
+    const body: any = {
+      model,
+      messages: [{ role: "user", content: prompt }]
+    };
+    if (!isMoonshot) {
+      body.temperature = 0.3;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), AI_REQUEST_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(`${apiBase}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`HTTP ${response.status} - ${errText}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content;
+      if (typeof content !== "string" || !content.trim()) {
+        throw new Error(`empty response from ${model}`);
+      }
+      return content;
+    } catch (e: any) {
+      clearTimeout(timeoutId);
+      lastError = e instanceof Error ? e : new Error(String(e));
+      const isAbort = lastError.name === 'AbortError' || lastError.message.includes('aborted');
+      if (isAbort) {
+        lastError = new Error(`timeout after ${AI_REQUEST_TIMEOUT_MS / 1000}s`);
+      }
+      console.warn(`\n[digest] model ${model} attempt ${attempt + 1} failed: ${lastError.message}`);
+      if (attempt === AI_MAX_RETRIES) break;
+    }
   }
 
-  const response = await fetch(`${apiBase}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`
-    },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`HTTP ${response.status} - ${errText}`);
-  }
-
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content;
-  if (typeof content !== "string" || !content.trim()) {
-    throw new Error(`empty response from ${model}`);
-  }
-  return content;
+  throw lastError || new Error(`all attempts failed for ${model}`);
 }
 
 // ----------------------------------------------------------------------
@@ -249,7 +279,7 @@ async function main() {
   const aiConfig = getAIConfig();
   console.log(`🚀 启动 FPGA/IC 验证资讯精选 | 时间范围: ${config.hours}h | 数量: ${config.topN}`);
   console.log(`🔌 API: ${aiConfig.apiBase} | models: ${aiConfig.models.join(" -> ")}`);
-  console.log(`⏱️ Rate limit: ${MAX_REQUESTS_PER_MINUTE} requests / ${RATE_LIMIT_WINDOW_MS / 1000}s`);
+  console.log(`⏱️ Rate limit: ${MAX_REQUESTS_PER_MINUTE} requests / ${RATE_LIMIT_WINDOW_MS / 1000}s | AI timeout: ${AI_REQUEST_TIMEOUT_MS / 1000}s | retries: ${AI_MAX_RETRIES}`);
   
   const cutoffDate = new Date(Date.now() - config.hours * 60 * 60 * 1000);
   
@@ -269,20 +299,7 @@ async function main() {
   
   for (const article of allArticles) {
     // 🌟 重新设计的评分 Prompt：弱化时效，强调验证与原型落地
-    const prompt = `你是一个资深的数字IC与FPGA验证专家。请评估以下文章：
-标题：${article.title}
-来源：${article.source}
-
-硬件技术文章通常具有长效价值。请弱化纯新闻时效性的影响，重点从以下三个维度进行综合打分(总分1-10的整数)：
-1. 技术与架构深度：是否涉及深层微架构、跨时钟域(CDC)、FPGA原型验证(Prototyping)或复杂系统级验证。
-2. 验证方法学：是否涉及高级UVM技巧、SystemVerilog最佳实践、覆盖率收敛或调试(Debug)效率提升。
-3. 工程落地价值：是否包含具体的代码示例、波形分析、架构图或真实的踩坑经验。
-
-请归入以下分类之一：
-[🛠️ 验证方法学与UVM, 💻 RTL与微架构设计, 🔬 FPGA原型与系统验证, ⚙️ EDA工具与生态, 📝 硬件实战与其他]
-
-必须严格按以下 JSON 格式返回：
-{"score": 8, "category": "分类名", "keywords": ["关键词1", "关键词2"], "reason": "一句话推荐理由，突出对日常验证工作的工程价值"}`;
+    const prompt = `你是一个资深的数字IC与FPGA验证专家。请评估以下文章：\n标题：${article.title}\n来源：${article.source}\n\n硬件技术文章通常具有长效价值。请弱化纯新闻时效性的影响，重点从以下三个维度进行综合打分(总分1-10的整数)：\n1. 技术与架构深度：是否涉及深层微架构、跨时钟域(CDC)、FPGA原型验证(Prototyping)或复杂系统级验证。\n2. 验证方法学：是否涉及高级UVM技巧、SystemVerilog最佳实践、覆盖率收敛或调试(Debug)效率提升。\n3. 工程落地价值：是否包含具体的代码示例、波形分析、架构图或真实的踩坑经验。\n\n请归入以下分类之一：\n[🛠️ 验证方法学与UVM, 💻 RTL与微架构设计, 🔬 FPGA原型与系统验证, ⚙️ EDA工具与生态, 📝 硬件实战与其他]\n\n必须严格按以下 JSON 格式返回：\n{\"score\": 8, \"category\": \"分类名\", \"keywords\": [\"关键词1\", \"关键词2\"], \"reason\": \"一句话推荐理由，突出对日常验证工作的工程价值\"}`;
 
     try {
       const respText = await callAI(prompt);
@@ -305,16 +322,7 @@ async function main() {
 
   console.log("📝 正在为 Top 推荐生成结构化摘要...");
   for (const article of topArticles) {
-    const prompt = `你是一个资深的数字IC/FPGA验证架构师。请为以下文章生成摘要：
-标题：${article.title}
-
-要求：
-1. 用 4-6 句话概括核心内容，指出文章解决的具体验证痛点或架构设计问题。
-2. 翻译标题为中文。
-3. 给出推荐给验证团队的理由。
-
-必须严格返回 JSON：
-{"zh_title": "中文标题", "summary": "摘要内容", "recommend_reason": "推荐理由"}`;
+    const prompt = `你是一个资深的数字IC/FPGA验证架构师。请为以下文章生成摘要：\n标题：${article.title}\n\n要求：\n1. 用 4-6 句话概括核心内容，指出文章解决的具体验证痛点或架构设计问题。\n2. 翻译标题为中文。\n3. 给出推荐给验证团队的理由。\n\n必须严格返回 JSON：\n{\"zh_title\": \"中文标题\", \"summary\": \"摘要内容\", \"recommend_reason\": \"推荐理由\"}`;
 
     try {
       const respText = await callAI(prompt);
@@ -372,7 +380,7 @@ async function main() {
   
   md += "```mermaid\npie title 文章分类占比\n";
   for (const [cat, count] of Object.entries(catCount)) {
-    md += `  "${cat}" : ${count}\n`;
+    md += `  \"${cat}\" : ${count}\n`;
   }
   md += "```\n\n";
 
