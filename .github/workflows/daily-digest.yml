@@ -39,6 +39,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.LLM_API_KEY }}
           OPENAI_API_BASE: ${{ vars.LLM_API_BASE }}
           OPENAI_MODEL: ${{ vars.LLM_MODEL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
           TZ: 'Asia/Shanghai'
         run: |
           mkdir -p public/archives

@@ -133,6 +133,21 @@ function getAIConfig() {
   return { apiKey, apiBase, models };
 }
 
+// 如果设置了 Cloudflare Access service token，就在请求里带上对应 header；否则保持原样
+function buildLLMHeaders(apiKey: string): Record<string, string> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${apiKey}`
+  };
+  const cfId = process.env.CF_ACCESS_CLIENT_ID;
+  const cfSecret = process.env.CF_ACCESS_CLIENT_SECRET;
+  if (cfId && cfSecret) {
+    headers["CF-Access-Client-Id"] = cfId;
+    headers["CF-Access-Client-Secret"] = cfSecret;
+  }
+  return headers;
+}
+
 let selectedModel: string | null = null;
 
 async function callOneModel(apiKey: string, apiBase: string, model: string, prompt: string): Promise<string> {
@@ -161,10 +176,7 @@ async function callOneModel(apiKey: string, apiBase: string, model: string, prom
     try {
       const response = await fetch(`${apiBase}/chat/completions`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
+        headers: buildLLMHeaders(apiKey),
         body: JSON.stringify(body),
         signal: controller.signal
       });
