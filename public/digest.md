@@ -1,38 +1,38 @@
 # 🛠️ FPGA / 验证技术精选
 
-> 生成时间：2026-11-02 06:00:51 | 数据范围：过去 96 小时
+> 生成时间：2026-11-09 06:00:57 | 数据范围：过去 96 小时
 
 ## 📝 行业视点
 
-当前硬件验证正加速向AI驱动的自主化演进，属性自动生成实现方法论插入，自主根因分析规模化应用于回归分类，显著提升UVM覆盖率与效率。Shift-Left被重新定义，验证从RTL前移并融合电压感知可观测性，从功能监控延伸至系统内测试，以应对微架构比特间交互的复杂性。物理基验证奠定Agentic EDA的信任基石，热效应从signoff专属问题转变为早期多物理场仿真考量，确保极端条件下的鲁棒性。这些趋势叠加监管压力，推动验证向智能化、物理感知与全生命周期合规方向深度融合。
+作为硬件验证专家，今日高分文章凸显三大硬核技术趋势：边缘AI硬件加速正深度重构RTL与微架构设计，Conv2D模式向实用GPU计算范式转化、AI模型精准适配边缘应用以及STM32H7P等MCU集成DSP/edge-AI/实时控制，迫使验证团队强化功耗-性能-面积协同仿真与异构加速器覆盖率分析。3D-IC信号完整性保护转向系统级方法，结合自动驾驶测试的固有复杂性，推动FPGA原型验证从模块级向全芯片多物理场协同演进，以应对串扰、热效应与时序闭环挑战。同时，AI/HPC数据中心网络安全嵌入与高可靠空间GaN栅极驱动集成，要求验证流程前置安全属性形式化证明与极端环境可靠性应力测试，整体加速硬件验证从传统功能确认向多维度系统韧性保障跃迁。
 
 ---
 
 ## 🏆 深度必读 (Top 3)
 
-### 1. [属性自动生成：方法论插入](https://semiengineering.com/auto-generation-of-properties-methodology-insertion/)
-**评分**: 7/10 | **分类**: 🛠️ 验证方法学与UVM | **标签**: `property auto-generation` `assertion insertion` `methodology` `SVA` `formal verification`
+### 1. [将Conv2D转化为实用的GPU计算模式](https://semiengineering.com/turning-conv2d-into-a-practical-gpu-compute-pattern/)
+**评分**: 6/10 | **分类**: 💻 RTL与微架构设计 | **标签**: `Conv2D` `GPU compute` `AI accelerator` `dataflow optimization`
 
-> **💡 推荐理由**：强烈推荐验证团队阅读，因其直接针对断言编写效率与质量痛点提供可落地的方法论与架构实践，能显著提升团队生产力、覆盖率和验证可靠性，助力构建更智能的自动化验证体系。
-
-**摘要**：
-本文聚焦数字IC/FPGA验证中属性（断言）自动生成的方法论插入问题，针对手动编写SVA/PSL属性耗时、易错且覆盖不全的核心痛点。文章提出系统化架构设计，将自动生成技术无缝嵌入验证流程，实现从规范到属性的自动化转换与工具链集成。通过明确插入点选择、流程优化和覆盖率提升策略，有效减少人为错误并加速验证收敛。该方法论强化了验证架构的可扩展性与可维护性，帮助团队在复杂设计中高效构建高质量属性库。整体解决了传统验证中属性开发瓶颈，推动自动化验证范式落地。
-
-### 2. [规模化自主根因分析用于回归分诊](https://semiengineering.com/scaling-autonomous-root-cause-analysis-for-regression-triage/)
-**评分**: 7/10 | **分类**: 🛠️ 验证方法学与UVM | **标签**: `Autonomous RCA` `Regression Triage` `Root Cause Analysis` `Debug Automation`
-
-> **💡 推荐理由**：强烈推荐给验证团队，因其直接解决了大规模回归中最耗时的根因定位瓶颈，提供了可落地的自主架构与工程实践，能有效提升自动化水平、减少人力依赖并加速项目交付，特别适合面临回归爆炸的中大型IC/FPGA团队。
+> **💡 推荐理由**：强烈推荐验证团队阅读，因其直接针对GPU/加速器中常见的Conv2D验证痛点（内存一致性、并行正确性、边界corner case）给出了实用架构解法，能显著提升验证效率与覆盖率，特别适合AI芯片与FPGA加速器项目。
 
 **摘要**：
-文章针对数字IC/FPGA验证中大规模回归测试失败分诊的核心痛点，提出了可扩展的自主根因分析（Autonomous RCA）架构。随着设计复杂度和测试用例数量激增，每日回归产生海量失败日志，传统手动分诊依赖专家经验、耗时且难以复现，严重拖累验证周期。方案通过分层日志解析、模式识别与机器学习模型，实现从失败现象到根因的自动化映射与优先级排序。架构设计重点解决了分布式环境下的可扩展性、历史数据关联以及复杂交互场景下的误报问题。最终显著缩短调试时间，提升回归效率，并支持持续集成中的实时自主分诊。
+本文针对深度学习中核心的Conv2D算子在GPU上落地难的问题，提出了一套将其转化为高效、可扩展计算模式的架构方法。文章重点解决了传统卷积实现中内存带宽瓶颈、线程块映射低效以及边界处理复杂等验证痛点与设计挑战。通过引入优化的数据重排、tiling策略和共享内存复用机制，作者将不规则的卷积计算重构为规整的GPU友好并行模式。该模式显著提升了计算资源利用率，并降低了硬件加速器验证中的覆盖盲区与性能建模难度。整体方案为数字IC/FPGA验证团队提供了可复用的计算内核设计与验证参考，便于在AI加速器项目中快速落地。
 
-### 3. [重新思考芯片设计中的左移](https://semiengineering.com/rethinking-shift-left-in-chip-design/)
-**评分**: 6/10 | **分类**: 📝 硬件实战与其他 | **标签**: `Shift Left` `Verification Strategy` `Early Design`
+### 2. [一种保护3D-IC信号完整性的系统级方法](https://semiengineering.com/a-system-level-approach-to-protecting-3d-ic-signal-integrity/)
+**评分**: 5/10 | **分类**: 📝 硬件实战与其他 | **标签**: `3D-IC` `Signal Integrity` `System-Level`
 
-> **💡 推荐理由**：强烈推荐给验证团队，因为文章精准击中当前数字IC/FPGA验证中的关键架构痛点与效率瓶颈，提供了可落地的左移再思考方法和验证架构优化思路，能直接帮助团队提升早期缺陷发现率、缩短验证周期并降低项目风险。
+> **💡 推荐理由**：强烈推荐给验证团队：直接针对当前先进封装验证中最棘手的3D-IC SI问题，提供可落地的系统级验证策略与架构思路，能有效弥补传统验证方法在多die协同仿真上的不足，帮助团队提前发现并规避信号完整性风险，提升3D-IC项目一次成功率。
 
 **摘要**：
-文章深入分析了传统芯片设计“左移”验证策略在面对现代复杂SoC和FPGA时的局限性，指出早期验证仍常陷入覆盖率不足、系统级bug发现滞后以及软硬件协同验证效率低下等核心痛点。它强调单纯将验证前移已不足以应对架构复杂度和上市时间压力，需重新审视左移理念并在架构设计阶段就集成形式验证、虚拟原型和加速仿真等先进方法。通过案例展示如何更早暴露架构缺陷，从而大幅降低后期调试成本和风险。文章进一步提出优化验证架构的实践框架，平衡投入与收益，帮助团队构建更智能、持续的验证流程。最终呼吁验证工程师从被动测试转向主动架构级验证，以应对日益严峻的设计挑战。
+文章针对3D-IC中因TSV、微凸点和多die堆叠导致的信号完整性（SI）恶化问题，提出系统级保护架构与验证方法。传统2D验证流程难以覆盖垂直互连串扰、电源噪声耦合及热电协同效应，造成后期SI失效风险高。作者通过系统级建模、多物理场协同仿真和早期架构约束，实现从die到package的全链路SI保护。该方法解决了验证团队在3D-IC中面临的跨die信号完整性验证盲区和仿真收敛困难痛点。核心贡献在于将SI保护从局部电路提升到系统架构层面，显著提升验证覆盖率和设计可靠性。
+
+### 3. [将AI模型适配到边缘应用](https://semiengineering.com/fitting-ai-models-to-edge-applications/)
+**评分**: 5/10 | **分类**: 💻 RTL与微架构设计 | **标签**: `Edge AI` `Model Optimization` `Hardware Acceleration` `FPGA/ASIC Inference`
+
+> **💡 推荐理由**：强烈推荐验证团队阅读，因其精准剖析了边缘AI部署中量化验证、硬件-软件协同验证及资源约束下的架构痛点，提供了可落地的验证策略与方法论，能直接提升团队在AI加速器与FPGA边缘应用验证中的效率与覆盖率。
+
+**摘要**：
+本文聚焦于如何将复杂AI模型有效适配到资源受限的边缘设备（如FPGA/ASIC），解决模型压缩、量化与硬件映射中的核心架构设计问题。文章指出验证痛点在于量化后精度损失难以量化验证、固定点运算引入的数值误差、以及功耗/延迟/面积权衡下的时序与功能正确性验证。通过系统级协同验证方法，确保优化后模型在边缘场景下既满足性能约束又不牺牲可靠性。核心解决了边缘AI加速器从算法到硬件实现的验证鸿沟与架构优化挑战。
 
 ---
 
@@ -40,56 +40,53 @@
 
 ```mermaid
 pie title 文章分类占比
-  "🛠️ 验证方法学与UVM" : 2
-  "📝 硬件实战与其他" : 6
-  "💻 RTL与微架构设计" : 1
+  "💻 RTL与微架构设计" : 2
+  "📝 硬件实战与其他" : 10
   "🔬 FPGA原型与系统验证" : 1
-  "⚙️ EDA工具与生态" : 5
+  "⚙️ EDA工具与生态" : 2
 ```
 
 ## 📋 更多分类好文
 
-### 💻 RTL与微架构设计
-
-- [**比特之间的复杂性**](https://semiengineering.com/the-complexity-between-the-bits/) - *semiengineering.com* (6分)
-  > 本文深入探讨了数字IC和FPGA设计中比特级操作所带来的验证复杂性，特别是在协议处理、数据打包/解包以及跨时钟域交互中的细微差异。它指出传统验证方法往往忽略比特间的边界条件和时序依赖，导致仿真覆盖率不足和硅后缺陷频发。文章提出了一种分层验证架构，结合形式验证和约束随机激励，以系统性地捕获这些隐藏的复杂性。通过实际案例，展示了如何建模比特级状态机和断言，解决多比特总线一致性检查的痛点。最终，强调了在架构设计阶段提前考虑比特级抽象的重要性，以降低整体验证成本并提升设计鲁棒性。
-
 ### 🔬 FPGA原型与系统验证
 
-- [**从功能监控到系统内测试：扩展电压感知可观测性**](https://semiengineering.com/from-functional-monitoring-to-in-system-test-extending-voltage-aware-observability/) - *semiengineering.com* (6分)
-  > 本文针对先进工艺下SoC/FPGA设计中电压域复杂、IR drop和动态电压波动难以有效观测的验证痛点，提出将电压感知可观测性从功能监控阶段扩展至系统内测试（In-System Test）。传统功能监控仅覆盖正常运行场景，无法充分暴露测试模式下的电压敏感故障和时序违例。文章通过架构级增强（如电压传感器集成、可观测性网络扩展和测试模式适配），实现了从功能到IST的统一电压监控框架。该方法显著提升了电源完整性相关缺陷的检测覆盖率，并支持在系统级验证中提前发现电压相关可靠性问题。整体方案兼顾了可测性设计（DFT）与运行时监控的协同，为验证架构师提供了可落地的扩展路径。
-
-### ⚙️ EDA工具与生态
-
-- [**基于物理的验证：可信代理式EDA的基石**](https://semiengineering.com/physics-based-validation-the-foundation-of-trustworthy-agentic-eda/) - *semiengineering.com* (5分)
-  > 文章指出传统EDA验证依赖抽象模型和仿真，难以捕捉真实物理效应如时序、功耗和工艺偏差，导致代理式AI驱动的EDA工具在复杂芯片设计中产生不可信结果。它提出以物理仿真为核心的验证架构，通过将SPICE级电路仿真、电磁分析和热建模深度集成到验证流程中，解决代理系统在自主决策时缺乏物理真实性的痛点。该方案强调构建多层次物理验证框架，使AI代理能够实时验证设计变更对硅片行为的影响，从而提升从RTL到GDSII的端到端可信度。文章还讨论了如何利用机器学习加速物理仿真，同时保持验证的确定性和可追溯性，以应对先进工艺节点下日益增长的验证复杂度。最终，物理基础验证被定位为构建可靠代理EDA系统的必要基础，避免“幻觉”设计并确保流片成功率。
-
-- [**当失败不是选项时的基于AI的电子设计**](https://www.eejournal.com/article/ai-based-electronic-design-for-when-failure-is-not-an-option/) - *eejournal.com* (5分)
-  > 文章针对高可靠性数字IC/FPGA设计中传统验证方法难以覆盖极端场景、仿真周期过长以及功能安全认证成本高昂的痛点，提出将AI驱动的生成式验证与形式化方法深度融合的架构。通过机器学习自动生成针对性测试激励、预测覆盖率空洞并加速回归，同时利用AI辅助的等价性检查和故障注入分析，显著缩短验证周期并提升对罕见失效模式的检测能力。该方案特别适用于汽车、航空和医疗等安全关键领域，解决了传统UVM/SystemVerilog流程在复杂SoC上面临的可扩展性瓶颈。文章还讨论了如何将AI模型嵌入现有验证平台，实现从RTL到门级的全流程智能化，从而在不牺牲确定性的前提下大幅降低人工调试工作量。整体架构强调可解释性和可追溯性，确保AI辅助决策满足ISO 26262等功能安全标准。
-
-- [**AI Raises The Bar For Tomorrow’s Engineers**](https://semiengineering.com/ai-raises-the-bar-for-tomorrows-engineers/) - *semiengineering.com* (4分)
-  > undefined
-
-- [**这里是不是越来越热了？为什么热分析不再是签核问题**](https://semiengineering.com/is-it-getting-hot-in-here-why-thermal-is-no-longer-a-signoff-problem/) - *semiengineering.com* (3分)
-  > 文章指出传统热分析仅作为签核阶段的事后检查，导致芯片设计中功耗密度过高引发的热热点、时序退化和可靠性问题难以在早期发现和修复，造成昂贵的迭代。通过将热仿真与功耗、时序和物理设计工具深度集成，实现从架构探索到布局布线的全流程热感知设计，验证团队可在RTL或门级阶段就预测并优化热行为。该方法解决了多物理场耦合验证的痛点，使热问题从签核瓶颈转变为可主动管理的设计约束，显著提升先进工艺节点下的一次流片成功率。
-
-- [**CEO Interview with Vera Yang of Flexcompute**](https://semiwiki.com/ceo-interviews/375564-ceo-interview-with-vera-yang-of-flexcompute/) - *semiwiki.com* (3分)
-  > 摘要生成失败。
+- [**为什么自动驾驶测试比看起来更难**](https://semiengineering.com/why-testing-automated-driving-is-harder-than-it-looks/) - *semiengineering.com* (5分)
+  > 文章深入剖析了自动驾驶系统测试远超传统IC/FPGA验证的复杂性，核心痛点在于驾驶场景的组合爆炸导致无法穷尽覆盖。边缘案例和罕见安全关键事件极难捕捉与复现，传统覆盖率指标失效。仿真环境与真实世界差距大，硬件在环验证架构面临实时性与保真度挑战。文章指出需构建基于风险的场景生成与智能验证流程，以应对AD SoC/FPGA的安全验证难题。这揭示了验证架构设计中从功能覆盖向场景与安全完整性覆盖转型的必要性。
 
 ### 📝 硬件实战与其他
 
-- [**欧盟《网络弹性法案》已触及芯片与IP供应商**](https://semiengineering.com/the-eu-cyber-resilience-act-reaches-chip-and-ip-suppliers/) - *semiengineering.com* (3分)
-  > 欧盟《网络弹性法案》(CRA)将强制性网络安全要求从软件扩展至硬件芯片与IP核供应商，要求所有数字产品在全生命周期内具备漏洞管理、安全更新和风险评估能力。文章指出验证团队面临的核心痛点是：传统功能验证无法覆盖CRA要求的安全属性（如侧信道防护、固件完整性、供应链可信度），导致现有UVM/SystemVerilog环境缺乏针对CRA合规性的可复用验证IP和覆盖率模型。架构层面需在SoC设计早期引入安全验证分层（硬件信任根、隔离域、加密加速器），并建立从IP交付到芯片量产的持续漏洞扫描与补丁验证流程。验证架构师必须将CRA合规性转化为可量化的断言、形式化证明和硬件仿真场景，否则将面临产品无法进入欧盟市场的风险。
+- [**为AI、HPC和数据中心添加网络安全**](https://semiengineering.com/adding-network-security-to-ai-hpc-and-data-centers-2/) - *semiengineering.com* (4分)
+  > 文章聚焦于在AI训练集群、HPC系统和超大规模数据中心中集成网络安全功能（如MACsec、IPsec、TLS硬件加速及零信任架构）的架构挑战。它指出了高带宽（400G/800G）网络下安全协议引入的延迟、吞吐下降和功耗激增等核心痛点，以及验证团队面临的协议一致性、侧信道防护和性能回归验证难题。文章提出了硬件安全引擎与网络协议栈深度融合的设计方法，强调可配置安全IP的模块化验证策略。通过案例展示了如何利用形式验证、仿真加速和硬件仿真平台解决复杂安全状态机的覆盖率问题。最终给出了在FPGA原型和ASIC实现中平衡安全强度与系统性能的实用架构建议。
 
-- [**High-NA的讣告来得过早**](https://semiwiki.com/semiconductor-manufacturers/375803-high-nas-obituary-was-premature/) - *semiwiki.com* (3分)
-  > 文章驳斥了High-NA EUV光刻技术即将被放弃的传言，强调其在2nm及以下节点仍具核心地位。它针对先进制程中多重图案化导致的布局复杂度激增和验证周期延长这一痛点，提出High-NA通过更高分辨率减少曝光次数。文章分析了随机效应、覆盖精度和3D结构图案化等架构设计挑战，并展示High-NA如何降低DFM规则检查和光刻仿真的迭代负担。验证流程可因此简化时序收敛和良率预测环节。整体论证了该技术对数字IC验证方法论的持续价值。
+- [**物理AI将硬件推向极限**](https://semiengineering.com/physical-ai-pushes-the-limits-of-hardware/) - *semiengineering.com* (4分)
+  > 文章深入探讨了物理AI（如机器人、自动驾驶和边缘智能系统）如何对数字IC与FPGA硬件提出极端要求，包括超低延迟实时推理、极致能效和传感器融合处理。它指出传统冯·诺依曼架构在功耗墙、带宽瓶颈和物理世界交互可靠性方面已达极限，催生存算一体、异构加速器和自适应硬件等新架构。核心验证痛点包括复杂异构SoC的功能覆盖不足、时序与功耗联合收敛困难，以及安全关键场景下的形式验证与故障注入挑战。架构设计问题聚焦于如何验证物理约束下的AI模型硬件映射、实时确定性以及多物理域协同仿真。文章强调需升级验证方法论，结合硬件仿真加速、虚拟原型和AI辅助验证来突破这些极限。
 
-- [**CEO Interview with Andrew Seddon of CircuitHub**](https://semiwiki.com/ceo-interviews/375343-ceo-interview-with-andrew-seddon-of-circuithub/) - *semiwiki.com* (3分)
+- [**意法半导体STM32H7P MCU嵌入数字信号处理、边缘AI与实时控制，面向苛刻工业应用**](https://www.eejournal.com/industry_news/stmicroelectronics-stm32h7p-mcus-embed-digital-signal-processing-edge-ai-and-real-time-control-for-demanding-industrial-applications/) - *eejournal.com* (4分)
+  > 文章介绍了STMicroelectronics推出的STM32H7P系列MCU，通过硬件集成DSP加速器、边缘AI推理引擎和实时控制外设，专为高性能工业应用设计。它解决了传统MCU在多任务并发时DSP计算与AI推理效率低下、实时控制确定性不足的架构设计痛点。核心架构采用异构多核与专用硬件加速，减少软件开销并提升系统响应速度与可靠性。对于验证而言，文章隐含指出了验证此类集成SoC时面临的多域功能交互覆盖难、实时时序约束验证复杂以及边缘AI精度与功耗协同验证的挑战。通过硬件嵌入式方案，有效缓解了软件仿真验证中性能瓶颈和覆盖率不足的问题。整体强调了在工业场景下实现高效、确定性控制的验证策略参考。
+
+- [**芯片产业一周回顾**](https://semiengineering.com/chip-industry-week-in-review-163/) - *semiengineering.com* (3分)
+  > 本文汇总了芯片行业本周关键动态，聚焦先进节点SoC与AI加速器设计中的验证挑战。核心痛点包括复杂异构系统仿真速度瓶颈、功能覆盖率收敛困难以及多die/Chiplet集成时的接口协议验证不足。文章分析了传统UVM架构在处理高并发时序与功耗验证时的扩展性局限，并探讨了形式验证与仿真混合方法在安全关键场景的应用短板。同时指出FPGA原型验证在早期软件bring-up中的时序与调试效率问题。这些内容直接针对数字IC/FPGA验证架构师面临的可扩展性与收敛效率设计难题。
+
+- [**为何集成栅极驱动调节对高可靠性空间GaN设计至关重要**](https://semiengineering.com/why-integrated-gate-drive-regulation-matters-for-high-reliability-space-gan-designs/) - *semiengineering.com* (3分)
+  > 文章聚焦高可靠性空间应用中GaN功率器件的栅极驱动架构挑战，指出分立式驱动在辐射、温度极端环境下易产生电压漂移与不稳定，导致过压损坏或欠压失效，这是验证中的核心痛点。集成栅极驱动调节通过内置精密稳压与保护电路，实现精确电压控制与抗辐射加固，显著提升系统可靠性并简化BOM。它解决了架构设计中驱动方案选择与辐射硬化保证的关键问题，强调需在验证中覆盖SEU、电压精度漂移及长期老化效应。文章为验证团队提供了针对空间级GaN电源设计的验证策略指导，帮助识别并缓解关键失效模式。整体提升了高可靠性设计的可验证性与覆盖率。
+
+- [**大学毕业生与人工智能**](https://semiengineering.com/college-grads-and-ai/) - *semiengineering.com* (3分)
+  > 文章深入分析了AI技术如何重塑大学毕业生进入数字IC/FPGA验证领域的路径与挑战。它指出了验证团队面临的核心痛点：新毕业生在复杂SoC/FPGA验证架构设计、覆盖率闭环和调试效率上的技能鸿沟，导致上手周期长、生产力低。文章提出利用AI辅助工具（如智能测试生成、断言推荐和异常检测）来重构验证流程，降低新人学习曲线。通过案例展示了AI如何帮助毕业生快速掌握UVM/SystemVerilog高级验证方法学，解决传统手工验证中的可扩展性与一致性问题。最终强调验证架构需融入AI协同设计，以应对人才短缺并提升整体验证质量与效率。
+
+- [**CEO Interview with Mark Rushworth of Finchetto**](https://semiwiki.com/ceo-interviews/375759-ceo-interview-with-mark-rushworth-of-finchetto/) - *semiwiki.com* (3分)
   > 摘要生成失败。
 
-- [**指南针：在昨日的心灵中寻找明天**](https://semiwiki.com/general/374750-the-compass-finding-tomorrow-in-the-minds-of-yesterday/) - *semiwiki.com* (3分)
-  > 本文提出“指南针”验证方法论，通过挖掘历史项目中的验证数据、覆盖率模式和专家经验，为当前及未来数字IC/FPGA验证提供前瞻性指导。它直接解决了验证团队知识流失、新项目重复造轮子以及难以预测验证重点的核心痛点。文章详细阐述了如何从昨日验证日志和bug报告中提取可复用架构模式，构建智能化、可扩展的测试平台。该方法优化了激励生成和覆盖率闭合流程，显著提升验证效率和bug发现速度。通过实际案例，展示了该框架如何将历史智慧转化为可落地的验证架构创新。总体而言，它为验证工程师提供了一种从过去经验中导航未来挑战的系统性解决方案。
+- [**Kneron CEO Albert Liu 访谈**](https://semiwiki.com/ceo-interviews/375923-ceo-interview-with-albert-liu-of-kneron/) - *semiwiki.com* (3分)
+  > 本文通过采访Kneron CEO Albert Liu，深入探讨了边缘AI芯片的架构设计与验证挑战。文章重点指出了NPU异构计算中神经网络加速器的验证痛点，包括动态工作负载下的功能覆盖不足、功耗-性能权衡验证复杂性以及软硬件协同仿真的瓶颈。Liu分享了公司在低功耗AI SoC设计中采用的分层验证策略和FPGA原型验证方法，以解决时序收敛和接口兼容性问题。核心内容还涉及如何通过架构创新应对快速模型迭代带来的回归验证压力，强调了早期系统级验证的重要性。这些见解直接针对数字IC验证中AI加速器特有的架构设计难题。
 
-- [**Infinitesima CEO Peter Jenkins专访**](https://semiwiki.com/ceo-interviews/375302-ceo-interview-with-peter-jenkins-of-infinitesima/) - *semiwiki.com* (3分)
-  > 该访谈聚焦半导体先进制程中纳米级3D表面计量的验证挑战，Infinitesima的Rapid Probe Microscope（RPM）技术通过高速原子力显微镜实现亚纳米精度的晶圆表面形貌检测，直接解决传统光学或接触式计量在高深宽比结构、EUV光刻缺陷及3D NAND/FinFET工艺中精度不足、吞吐量低的痛点。文章详细阐述了RPM如何集成到产线中，提供实时反馈以优化工艺窗口，从而降低验证周期中因计量误差导致的误判和良率损失。针对FPGA/ASIC验证团队，它强调了将物理计量数据与仿真模型结合的重要性，以应对先进节点下设计-工艺协同验证的复杂性。核心架构创新在于非接触高速扫描与机器学习辅助缺陷分类，显著提升了从设计验证到量产的闭环效率。
+- [**Electroninks公司CEO Brett Walker访谈**](https://semiwiki.com/ceo-interviews/375666-ceo-interview-with-brett-walker-of-electroninks-2/) - *semiwiki.com* (3分)
+  > 本文通过采访Electroninks CEO Brett Walker，深入探讨了粒子自由导电墨水技术在先进电子制造中的创新应用。该技术直接解决了传统粒子基导电材料在打印电路和互连中导致的堵塞、不均匀导电性和可靠性缺陷等痛点，这些缺陷常引发FPGA原型板和数字IC系统中的信号完整性与时序验证失败。文章重点分析了如何通过新型材料优化互连架构设计，减少物理原型迭代中的验证开销。它还讨论了将增材制造工艺集成到验证流程中的架构策略，以提升系统级可靠性仿真的准确性。最终，提供了加速硬件验证闭环并降低流片风险的实用见解。
+
+### ⚙️ EDA工具与生态
+
+- [**意法半导体简化STM32开发者的AI模型开发**](https://www.eejournal.com/industry_news/stmicroelectronics-streamlines-ai-model-development-for-stm32-developers/) - *eejournal.com* (4分)
+  > 文章介绍了STMicroelectronics通过更新STM32Cube.AI和相关工具链，显著简化了在资源受限的STM32 MCU上开发和部署AI模型的流程。它重点解决了传统边缘AI开发中模型量化精度损失、手动优化耗时以及硬件资源匹配困难等验证痛点。通过自动化神经网络转换、优化和C代码生成，减少了架构设计迭代中因性能与准确性权衡导致的反复验证工作。验证工程师可借此更高效地验证推理引擎的正确性、时序和功耗约束。整体提升了从训练模型到嵌入式部署的端到端验证效率，降低了边缘AI SoC集成风险。
+
+- [**CEO Interview With Trey Closson of Amplio**](https://semiwiki.com/ceo-interviews/375744-ceo-interview-with-trey-closson-of-amplio/) - *semiwiki.com* (3分)
+  > 摘要生成失败。
 
